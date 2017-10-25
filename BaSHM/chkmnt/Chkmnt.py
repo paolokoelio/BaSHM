@@ -9,7 +9,7 @@ import subprocess as sp
 
 class Chkmnt(object):
     '''
-    Checks if the AUTOMOUNT is turned off and can de/activate it.
+    Checks if the AUTOMOUNT is turned on and can dis/enable it.
     '''
 
     __config = None
@@ -39,7 +39,7 @@ class Chkmnt(object):
              shell=True)
       
       print(out)
-      return 
+      return
       
     def deactmnt(self):
       print('Issuing command: "' + self.__config.get('commands', 'deactmnt'))
@@ -49,6 +49,10 @@ class Chkmnt(object):
              shell=True)
       
       print(out)
+      if out == 0:
+        print('AUTOMOUNT disabled successfully')
+        print('Now you can connect the Disk')
+      
       return
 
     def actmnt(self):

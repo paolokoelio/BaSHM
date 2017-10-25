@@ -63,7 +63,7 @@ class Menu(object):
         print "Welcome, to BaSHM\n"
       print "Please choose the action you want to launch:"
       print "1. Check and Deactivate AUTOMOUNT"
-      print "2. Menu 2"
+      print "2. Perform Health Test"
       print "\n0. Quit"
       choice = raw_input(" >>  ")
       ch = [choice.lower()]
@@ -97,7 +97,7 @@ class Menu(object):
       else:
         mn[ch[0]]()
     #get back to main menu by default
-    self.__menu_actions['main_menu']()
+    mn['main_menu']()
     return
   
 #   def launcher(self, action):
@@ -126,7 +126,9 @@ class Menu(object):
    
   # Menu 2
   def menu2(self):
-      print "Hello Menu 2 !\n"
+      print "Health test with SMART data !\n"
+      print "1. Health test with SMART data !\n"
+      print "2. Open dd shell\n"
       print "9. Back"
       print "0. Quit" 
       choice = raw_input(" >>  ")
