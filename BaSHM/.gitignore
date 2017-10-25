@@ -23,5 +23,5 @@
 
 #folders
 files_tmp/
-.settings/
 build/	
+/sleuthkit/
