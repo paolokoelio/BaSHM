@@ -30,7 +30,8 @@ class Chkmnt(object):
       #out = sp.check_output(['diskpart','/s','\win_scripts\chkmnt.txt'])
       print('Issuing command: "' + self.__config.get('commands', 'diskpart')
             + self.__config.get('paths', 'static')
-            + self.__config.get('names', 'chkmnt') +'" needs to be run as Priviledged User')
+            + self.__config.get('names', 'chkmnt') +'"' )
+      print('needs to be run as Priviledged User')            
       
       out = sp.call(self.__config.get('commands', 'diskpart') + " "
             + self.__config.get('paths', 'static')
@@ -41,10 +42,20 @@ class Chkmnt(object):
       return 
       
     def deactmnt(self):
-      print('Issuing command: "' + self.__config.get('commands', 'deactmnt')
-            +'" needs to be run as Priviledged User')
+      print('Issuing command: "' + self.__config.get('commands', 'deactmnt'))
+      print('needs to be run as Priviledged User')
   
       out = sp.call(self.__config.get('commands', 'deactmnt'),
+             shell=True)
+      
+      print(out)
+      return
+
+    def actmnt(self):
+      print('Issuing command: "' + self.__config.get('commands', 'actmnt'))
+      print('needs to be run as Priviledged User')
+  
+      out = sp.call(self.__config.get('commands', 'actmnt'),
              shell=True)
       
       print(out)

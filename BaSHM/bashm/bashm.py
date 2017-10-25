@@ -72,8 +72,7 @@ def main(argv=None):
 #         if opts.outfile:
 #             print("outfile = %s" % opts.outfile)
 
-
-        print("Hello")
+        # Launch main menu
         menu = Menu(config)
         menu.main_menu()
 

@@ -35,6 +35,7 @@ class Menu(object):
     self.__chkmnt_menu = {
         '1': self.__checkMount.check,
         '2':self.__checkMount.deactmnt,
+        '3':self.__checkMount.actmnt,
         '9':self.back,
         '0':self.exit,
     }
@@ -111,9 +112,10 @@ class Menu(object):
    
   # CHeck AUTOMOUNT
   def chkmnt(self):
-      print "Deactivate AUTOMOUNT\n"
+      print "Before connecting the Disk disable Windows AUTOMOUNT\n"
       print "1. Check AUTOMOUNT"
-      print "2. Deactivate AUTOMOUNT"
+      print "2. Disable AUTOMOUNT"
+      print "3. Enable AUTOMOUNT"
       print "9. Back"
       print "0. Quit"
       choice = raw_input(" >>  ")
