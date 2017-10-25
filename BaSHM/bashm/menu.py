@@ -34,7 +34,7 @@ class Menu(object):
     
     self.__chkmnt_menu = {
         '1': self.__checkMount.check,
-        '2':self.chkmnt,
+        '2':self.__checkMount.deactmnt,
         '9':self.back,
         '0':self.exit,
     }
@@ -48,8 +48,7 @@ class Menu(object):
         '9': self.back,
         '0': self.exit,
     }
-    
-  
+    print("Hey")
 
   # =======================
   #     MENUS FUNCTIONS
@@ -59,8 +58,9 @@ class Menu(object):
   def main_menu(self):
       cls()
       
-      print "Welcome, to BaSHM\n"
-      print "Please choose the action you want to start:"
+      if True:
+        print "Welcome, to BaSHM\n"
+      print "Please choose the action you want to launch:"
       print "1. Check and Deactivate AUTOMOUNT"
       print "2. Menu 2"
       print "\n0. Quit"
@@ -70,15 +70,6 @@ class Menu(object):
    
       return
   
-  def get_in_dic(self, ch):
-    mn = self.__menu_actions
-    if ch[0] in mn:
-      if len(ch) > 1:
-        if ch[1] in mn[ch[0]]:
-          mn[ch[0]][ch[1]]()
-      else:
-        mn[ch[0]]()
-   
   # Execute menu
   def exec_menu(self, ch):
       cls()
@@ -94,15 +85,29 @@ class Menu(object):
               print "Invalid selection, please try again.\n"
               self.__menu_actions['main_menu']()
       return
-  def launcher(self, action):
-      if action == '':
-          self.__menu_actions['main_menu']()
+  
+  # util to call a method up to 2nd depth level
+  def get_in_dic(self, ch):
+    mn = self.__menu_actions
+    if ch[0] in mn:
+      if len(ch) > 1:
+        if ch[1] in mn[ch[0]]:
+          mn[ch[0]][ch[1]]()
       else:
-          try:
-              self.__checkMount[action]()
-          except KeyError:
-              print "Invalid action, please try again.\n"
-              self.__menu_actions['main_menu']()
+        mn[ch[0]]()
+    #get back to main menu by default
+    self.__menu_actions['main_menu']()
+    return
+  
+#   def launcher(self, action):
+#       if action == '':
+#           self.__menu_actions['main_menu']()
+#       else:
+#           try:
+#               self.__checkMount[action]()
+#           except KeyError:
+#               print "Invalid action, please try again.\n"
+#               self.__menu_actions['main_menu']()
    
   # CHeck AUTOMOUNT
   def chkmnt(self):

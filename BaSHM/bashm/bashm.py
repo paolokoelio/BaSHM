@@ -41,7 +41,7 @@ def main(argv=None):
     '''Command line options.'''
 
     program_name = os.path.basename(sys.argv[0])
-    program_version = "v0.1"
+    program_version = "v0.1.01"
     program_build_date = "%s" % __updated__
 
     program_version_string = '%%prog %s (%s)' % (program_version, program_build_date)
@@ -81,10 +81,11 @@ def main(argv=None):
 
 
     except Exception, e:
-        indent = len(program_name) * " "
-        sys.stderr.write(program_name + ": " + repr(e) + "\n")
-        sys.stderr.write(indent + "  for help use --help\n")
         traceback.print_exc()
+        #indent = len(program_name) * " "
+        sys.stderr.write(program_name + ": " + repr(e) + "\n")
+        #sys.stderr.write(indent + "  for help use --help\n")
+        
         return 2
 
 
