@@ -5,6 +5,7 @@ Created on 23 ott 2017
 '''
 import subprocess as sp  # for screen cleaning (cls)
 from chkmnt.Chkmnt import Chkmnt
+from chkhealth.ChkHealth import ChkHealth
 
 class Menu(object):
   '''
@@ -31,9 +32,18 @@ class Menu(object):
     # print("YOYO" + path)
     
     self.__checkMount = Chkmnt(self.__config)
+    self.__checkHealth = ChkHealth()
+
+    
+    self.__chkHealth_menu = {
+        '1':self.__checkHealth.chkhealth,
+        '2':self.__checkHealth.chkhealth,
+        '9':self.back,
+        '0':self.exit,
+    }
     
     self.__chkmnt_menu = {
-        '1': self.__checkMount.check,
+        '1':self.__checkMount.check,
         '2':self.__checkMount.deactmnt,
         '3':self.__checkMount.actmnt,
         '9':self.back,
@@ -46,6 +56,7 @@ class Menu(object):
         '1': self.chkmnt,
         '2': self.health,
         'chkmnt': self.__chkmnt_menu,
+        'chkhealth': self.__chkHealth_menu,
         '9': self.back,
         '0': self.exit,
     }
@@ -110,7 +121,7 @@ class Menu(object):
 #               print "Invalid action, please try again.\n"
 #               self.__menu_actions['main_menu']()
    
-  # CHeck AUTOMOUNT
+  # Check AUTOMOUNT
   def chkmnt(self):
       print "Before connecting the Disk disable Windows AUTOMOUNT\n"
       print "1. Check AUTOMOUNT"
@@ -124,15 +135,15 @@ class Menu(object):
       return
    
    
-  # Menu 2
+  # Health check with SMART
   def health(self):
-      print "Health test with SMART data !\n"
-      print "1. Health test with SMART data !\n"
+      print "Health test with SMART data \n"
+      print "1. Health test with smartctl \n"
       print "2. Open dd shell\n"
       print "9. Back"
       print "0. Quit" 
       choice = raw_input(" >>  ")
-      choice = [choice.lower()]
+      choice = ['chkhealth' , choice.lower()]
       self.exec_menu(choice)
       return
    
