@@ -4,6 +4,7 @@ Created on 23 ott 2017
 @author: koelio
 '''
 import subprocess as sp  # for screen cleaning (cls)
+import sys
 from chkmnt.Chkmnt import Chkmnt
 from chkhealth.ChkHealth import ChkHealth
 
@@ -11,8 +12,9 @@ class Menu(object):
   '''
   Main menu for choosing actions.
   '''
-  # initilize
+  # some declarations
   __checkMount = None
+  __checkHealth = None
   
   # Get confs, needed throughout the program
   __config = None
@@ -24,7 +26,7 @@ class Menu(object):
   def __init__(self, config):
     
     '''
-    Menu's entries definitions and initialize Classes
+    Menu entries definitions and initialize Classes
     '''
     self.__config = config
     
@@ -102,10 +104,13 @@ class Menu(object):
   def get_in_dic(self, ch):
     mn = self.__menu_actions
     if ch[0] in mn:
+      #if this is a second level menu
       if len(ch) > 1:
         if ch[1] in mn[ch[0]]:
+          #then go to second level choice
           mn[ch[0]][ch[1]]()
       else:
+        # go to first level choice
         mn[ch[0]]()
     #get back to main menu by default
     mn['main_menu']()
@@ -121,7 +126,7 @@ class Menu(object):
 #               print "Invalid action, please try again.\n"
 #               self.__menu_actions['main_menu']()
    
-  # Check AUTOMOUNT
+  # Menu for check AUTOMOUNT
   def chkmnt(self):
       print "Before connecting the Disk disable Windows AUTOMOUNT\n"
       print "1. Check AUTOMOUNT"
@@ -135,7 +140,7 @@ class Menu(object):
       return
    
    
-  # Health check with SMART
+  # Menu for Health check with SMART
   def health(self):
       print "Health test with SMART data \n"
       print "1. Health test with smartctl \n"
@@ -153,7 +158,7 @@ class Menu(object):
    
   # Exit program
   def exit(self):
-      # sys.exit(0)
+      sys.exit(0)
       return
     
 def cls():

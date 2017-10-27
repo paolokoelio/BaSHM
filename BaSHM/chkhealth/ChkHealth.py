@@ -19,8 +19,16 @@ class ChkHealth(object):
         Constructor
         '''
         
-        self.__devlist = DeviceList()
+        
         
     def chkhealth(self):
       
+      self.__devlist = DeviceList()
+      
       print(self.__devlist)
+      
+      #print("Device 2:\n" + str(self.__devlist.devices[1].all_attributes()))
+      
+      print("Device 2: " + str(self.__devlist.devices[1]) + "\nSMART check result: \n" + str(self.__devlist.devices[1].assessment))
+      
+      
