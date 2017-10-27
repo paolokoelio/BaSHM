@@ -44,7 +44,7 @@ class Menu(object):
     self.__menu_actions = {
         'main_menu': self.main_menu,
         '1': self.chkmnt,
-        '2': self.menu2,
+        '2': self.health,
         'chkmnt': self.__chkmnt_menu,
         '9': self.back,
         '0': self.exit,
@@ -125,7 +125,7 @@ class Menu(object):
    
    
   # Menu 2
-  def menu2(self):
+  def health(self):
       print "Health test with SMART data !\n"
       print "1. Health test with SMART data !\n"
       print "2. Open dd shell\n"
