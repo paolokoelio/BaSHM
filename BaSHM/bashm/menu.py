@@ -70,8 +70,6 @@ class Menu(object):
    
   # Main menu
   def main_menu(self):
-      cls()
-      
       if True:
         print "Welcome, to BaSHM\n"
       print "Please choose the action you want to launch:"

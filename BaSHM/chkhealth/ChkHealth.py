@@ -19,7 +19,10 @@ class ChkHealth(object):
         Constructor
         '''
         
-        
+    def dev_menu(self):
+      
+      
+      pass   
         
     def chkhealth(self):
       

@@ -31,7 +31,7 @@ class Chkmnt(object):
       print('Issuing command: "' + self.__config.get('commands', 'diskpart')
             + self.__config.get('paths', 'static')
             + self.__config.get('names', 'chkmnt') +'"' )
-      print('needs to be run as Priviledged User')            
+      print('needs to be run as Priviledged User')
       
       out = sp.call(self.__config.get('commands', 'diskpart') + " "
             + self.__config.get('paths', 'static')
