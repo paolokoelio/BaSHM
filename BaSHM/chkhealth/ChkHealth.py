@@ -33,7 +33,7 @@ class ChkHealth(object):
 #         self.__menu_devs[i] = "mod:%s sn:%s, %s device on /dev/%s" % (
 #             device.model, device.serial, device.interface.upper(), device.name)
 
-        print( "%d. %s sn:%s, %s device on /dev/%s" % (
+        print( "%d. %s serial:%s, %s device on /dev/%s" % (
             i, device.model, device.serial, device.interface.upper(), device.name) )
         
         i = i + 1
@@ -53,7 +53,7 @@ class ChkHealth(object):
       #optionally? print alla attributes
       #device.all_attributes()
       
-      print("\nSMART check for " +str(device.name) + " " + str(device.model) + ":")
+      print("\nSMART check for /dev/" +str(device.name) + " " + str(device.model) + ":")
       print(" " + str(device.assessment) + "\n")
       
     def exec_menu(self, ch):
