@@ -8,13 +8,13 @@ from __future__ import print_function
 from pySMART import DeviceList, Device
 
 
-
 class ChkHealth(object):
     '''
     Class for managing objects related to Disk Health through pySMART wrapper for smartmontools (https://www.smartmontools.org/)
     '''
     
     __devlist = None
+    __device = None
     __menu_devs = {}
 
     def __init__(self):
@@ -29,25 +29,44 @@ class ChkHealth(object):
       
       i = 1
       for device in self.__devlist.devices:
-        self.__menu_devs[i] = "mod:%s sn:%s, %s device on /dev/%s" % (
-            device.model, device.serial, device.interface.upper(), device.name)
+        
+#         self.__menu_devs[i] = "mod:%s sn:%s, %s device on /dev/%s" % (
+#             device.model, device.serial, device.interface.upper(), device.name)
 
-#         print( "%d mod:%s sn:%s %s device on /dev/%s" % (
-#             i, device.model, device.serial, device.interface.upper(), device.name) )
+        print( "%d. %s sn:%s, %s device on /dev/%s" % (
+            i, device.model, device.serial, device.interface.upper(), device.name) )
         
         i = i + 1
-      print (self.__menu_devs)
+      #print (self.__menu_devs)
+      
+      ch = raw_input(" >>  ")
+      self.exec_menu(ch)
     
     def initialize(self):
-      pass
-        
-    def chkhealth(self):
-      
       self.init_menu()
-      #print(self.__devlist)
+        
+    def chkhealth(self, device):
       
-      #print("Device 2:\n" + str(self.__devlist.devices[1].all_attributes()))
+      print("\n")
+      #TODO print device information
       
-      print("Device 2: " + str(self.__devlist.devices[1]) + "\nSMART check result: \n" + str(self.__devlist.devices[1].assessment))
+      #optionally? print alla attributes
+      #device.all_attributes()
       
+      print("\nSMART check for " +str(device.name) + " " + str(device.model) + ":")
+      print(" " + str(device.assessment) + "\n")
       
+    def exec_menu(self, ch):
+        if ch == '':
+            pass
+        elif ch == 0:
+            self.chkhealth()
+        else:
+            try:
+                #select the device to test, -1 because in menu prints at 1
+                self.__device = self.__devlist.devices[int(ch)-1]
+                self.chkhealth(self.__device)
+            except KeyError:
+                print("Invalid selection, please try again.\n")
+                pass
+        return

@@ -19,7 +19,7 @@ class Menu(object):
   # Get confs, needed throughout the program
   __config = None
   
-  # Main definition - constants
+  # Main definition
   __menu_actions = {}
   
 
@@ -38,8 +38,8 @@ class Menu(object):
 
     
     self.__chkHealth_menu = {
-        '1':self.__checkHealth.chkhealth,
-        '2':self.__checkHealth.chkhealth,
+        '1':self.__checkHealth.initialize,
+        '2':self.__checkHealth.initialize,
         '9':self.back,
         '0':self.exit,
     }
@@ -52,7 +52,7 @@ class Menu(object):
         '0':self.exit,
     }
 
-          # Menu definition
+    # Menu definition
     self.__menu_actions = {
         'main_menu': self.main_menu,
         '1': self.chkmnt,
@@ -62,7 +62,6 @@ class Menu(object):
         '9': self.back,
         '0': self.exit,
     }
-    print("Hey")
 
   # =======================
   #     MENUS FUNCTIONS
@@ -98,7 +97,7 @@ class Menu(object):
               self.__menu_actions['main_menu']()
       return
   
-  # util to call a method up to 2nd depth level
+  # Util to call a method up to 2nd depth level
   def get_in_dic(self, ch):
     mn = self.__menu_actions
     if ch[0] in mn:
