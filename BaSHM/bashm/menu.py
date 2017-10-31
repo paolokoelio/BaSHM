@@ -33,7 +33,7 @@ class Menu(object):
     # path = str(config.get('paths', 'static'))
     # print("YOYO" + path)
     
-    self.__checkMount = Chkmnt(self.__config)
+    self.__checkMount = Chkmnt(self.__config) #TODO config to be removedfrom here and main
     self.__checkHealth = ChkHealth()
 
     

@@ -4,7 +4,9 @@ Created on 27 ott 2017
 @author: koelio
 '''
 
+from __future__ import print_function
 from pySMART import DeviceList, Device
+
 
 
 class ChkHealth(object):
@@ -13,22 +15,36 @@ class ChkHealth(object):
     '''
     
     __devlist = None
+    __menu_devs = {}
 
     def __init__(self):
         '''
         Constructor
         '''
         
-    def dev_menu(self):
+    def init_menu(self):
       
+      print('Choose the device to test:\n')
+      self.__devlist = DeviceList()
       
-      pass   
+      i = 1
+      for device in self.__devlist.devices:
+        self.__menu_devs[i] = "mod:%s sn:%s, %s device on /dev/%s" % (
+            device.model, device.serial, device.interface.upper(), device.name)
+
+#         print( "%d mod:%s sn:%s %s device on /dev/%s" % (
+#             i, device.model, device.serial, device.interface.upper(), device.name) )
+        
+        i = i + 1
+      print (self.__menu_devs)
+    
+    def initialize(self):
+      pass
         
     def chkhealth(self):
       
-      self.__devlist = DeviceList()
-      
-      print(self.__devlist)
+      self.init_menu()
+      #print(self.__devlist)
       
       #print("Device 2:\n" + str(self.__devlist.devices[1].all_attributes()))
       
