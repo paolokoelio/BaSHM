@@ -5,7 +5,8 @@ Created on 27 ott 2017
 '''
 
 from __future__ import print_function
-from pySMART import DeviceList, Device
+from pySMART import DeviceList
+from utils.ConcereteWriter import ConcreteWriter
 
 
 class ChkHealth(object):
@@ -15,12 +16,15 @@ class ChkHealth(object):
     
     __devlist = None
     __device = None
+    __writer = None
     __menu_devs = {}
+    __f_name = 'disk_data.txt'
 
     def __init__(self):
         '''
         Constructor
         '''
+        self.__writer = ConcreteWriter()
         
     def init_menu(self):
       
@@ -47,14 +51,23 @@ class ChkHealth(object):
         
     def chkhealth(self, device):
       
+      self.__writer.open(self.__f_name)
       print("\n")
       #TODO print device information
-      
-      #optionally? print alla attributes
+      out = 'Devie Data:' + '\n' + 'name: ' + str(device.name) + ', mod: ' +  str(device.model) + ', sn: ' + str(device.serial) + ', MD5: ' #TODO hash
+      print(out)
+      self.__writer.write(out)
+      #optionally? print all attributes
       #device.all_attributes()
       
-      print("\nSMART check for /dev/" +str(device.name) + " " + str(device.model) + ":")
-      print(" " + str(device.assessment) + "\n")
+      out = "\nSMART check for /dev/" +str(device.name) + " " + str(device.model) + ":\n"
+      print(out)
+      self.__writer.write(out)
+      out = str(device.assessment) + "\n"
+      print(out)
+      self.__writer.write(out)
+      
+      self.__writer.close()
       
     def exec_menu(self, ch):
         if ch == '':
