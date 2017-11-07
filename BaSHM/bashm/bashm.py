@@ -19,14 +19,10 @@ It defines main + some error control (and logging TODO)
 
 import sys, traceback
 import os
-import ConfigParser
 
 from menu import Menu
 from optparse import OptionParser
 
-
-config = ConfigParser.ConfigParser()
-config.read('..\config\config.cfg')
 
 __all__ = []
 __version__ = 0.1
@@ -73,7 +69,7 @@ def main(argv=None):
 #             print("outfile = %s" % opts.outfile)
 
         # Launch main menu
-        menu = Menu(config)
+        menu = Menu()
         menu.main_menu()
 
         print("Exiting correctly.")

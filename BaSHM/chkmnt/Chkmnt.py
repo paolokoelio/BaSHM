@@ -5,7 +5,11 @@ Created on 24 ott 2017
 '''
 
 import subprocess as sp
+import ConfigParser
 # from bashm.menu import Menu
+
+
+CONFIG_PATH = '..\config\config.cfg'
 
 class Chkmnt(object):
     '''
@@ -14,12 +18,15 @@ class Chkmnt(object):
 
     __config = None
 
-    def __init__(self, config):
-        '''
-        Constructor
-        '''
-#         try:
-        self.__config = config
+    def __init__(self):
+      '''
+      Constructor
+      '''
+          #try:
+      config = ConfigParser.ConfigParser()
+      config.read(CONFIG_PATH)
+#         
+      self.__config = config
 #         except Exception, e:
 #           sys.stderr.write(repr(e) + " in config file.\n")
           #traceback.print_exc()

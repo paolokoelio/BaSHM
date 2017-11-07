@@ -23,17 +23,16 @@ class Menu(object):
   __menu_actions = {}
   
 
-  def __init__(self, config):
+  def __init__(self):
     
     '''
     Menu entries definitions and initialize Classes
     '''
-    self.__config = config
     
     # path = str(config.get('paths', 'static'))
     # print("YOYO" + path)
     
-    self.__checkMount = Chkmnt(self.__config) #TODO config to be removedfrom here and main
+    self.__checkMount = Chkmnt()
     self.__checkHealth = ChkHealth()
 
     
