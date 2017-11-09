@@ -69,6 +69,8 @@ def main(argv=None):
 #             print("outfile = %s" % opts.outfile)
 
         # Launch main menu
+        print("Welcome to BaHSM\n")
+        
         menu = Menu()
         menu.main_menu()
 

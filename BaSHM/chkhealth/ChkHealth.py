@@ -49,6 +49,7 @@ class ChkHealth(object):
     def initialize(self):
       self.init_menu()
         
+    #TODO exception handling    
     def chkhealth(self, device):
       
       self.__writer.open(self.__f_name)

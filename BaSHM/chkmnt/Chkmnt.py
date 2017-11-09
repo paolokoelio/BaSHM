@@ -38,17 +38,21 @@ class Chkmnt(object):
       print('Issuing command: "' + self.__config.get('commands', 'diskpart')
             + self.__config.get('paths', 'static')
             + self.__config.get('names', 'chkmnt') +'"' )
-      print('needs to be run as Priviledged User')
+      print('Needs to be run as Priviledged User')
       
-      out = sp.call(self.__config.get('commands', 'diskpart') + " "
+      try:
+          sp.check_output(self.__config.get('commands', 'diskpart') + " "
             + self.__config.get('paths', 'static')
             + self.__config.get('names', 'chkmnt'),
+             stderr=sp.STDOUT,
              shell=True)
+      except sp.CalledProcessError:
+          print("Something went wrong. You may retry this action." + " ret_code: " + str(sp.returncode) + "\n")
       
-      print(out)
       return
       
-    def deactmnt(self):
+    #TODO exception handling
+    def deactmnt(self): 
       print('Issuing command: "' + self.__config.get('commands', 'deactmnt'))
       print('needs to be run as Priviledged User')
   
@@ -62,6 +66,7 @@ class Chkmnt(object):
       
       return
 
+    #TODO exception handling
     def actmnt(self):
       print('Issuing command: "' + self.__config.get('commands', 'actmnt'))
       print('needs to be run as Priviledged User')

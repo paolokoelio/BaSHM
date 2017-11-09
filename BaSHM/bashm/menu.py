@@ -16,21 +16,33 @@ class Menu(object):
   __checkMount = None
   __checkHealth = None
   
-  # Get confs, needed throughout the program
-  __config = None
-  
   # Main definition
   __menu_actions = {}
   
+  mainMenuLabels = ["Please choose the action you want to launch:", 
+                           "1. Check and Deactivate AUTOMOUNT", 
+                           "2. Perform SMART Health Test",
+                           "\n0. Quit"]
+  
+  checkMountLabels = ["Before connecting the Disk disable Windows AUTOMOUNT\n",
+                              "1. Check AUTOMOUNT",
+                              "2. Disable AUTOMOUNT",
+                              "3. Enable AUTOMOUNT",
+                              "9. Back",
+                              "0. Quit"
+                              ]
+  checkHealthLabels = ["Perform SMART Health Test",
+                              "1. SMART Health test with smartctl \n",
+                              "2. Open dd shell\n",
+                              "9. Back",
+                              "0. Quit"
+                              ]
 
   def __init__(self):
     
     '''
     Menu entries definitions and initialize Classes
     '''
-    
-    # path = str(config.get('paths', 'static'))
-    # print("YOYO" + path)
     
     self.__checkMount = Chkmnt()
     self.__checkHealth = ChkHealth()
@@ -68,12 +80,8 @@ class Menu(object):
    
   # Main menu
   def main_menu(self):
-      if True:
-        print "Welcome, to BaSHM\n"
-      print "Please choose the action you want to launch:"
-      print "1. Check and Deactivate AUTOMOUNT"
-      print "2. Perform Health Test"
-      print "\n0. Quit"
+      for m in self.mainMenuLabels:
+        print(m)
       choice = raw_input(" >>  ")
       ch = [choice.lower()]
       self.exec_menu(ch)
@@ -124,12 +132,8 @@ class Menu(object):
    
   # Menu for check AUTOMOUNT
   def chkmnt(self):
-      print "Before connecting the Disk disable Windows AUTOMOUNT\n"
-      print "1. Check AUTOMOUNT"
-      print "2. Disable AUTOMOUNT"
-      print "3. Enable AUTOMOUNT"
-      print "9. Back"
-      print "0. Quit"
+      for m in self.checkMountLabels:
+        print(m)
       choice = raw_input(" >>  ")
       choice = ['chkmnt' , choice.lower()]
       self.exec_menu(choice)
@@ -138,11 +142,8 @@ class Menu(object):
    
   # Menu for Health check with SMART
   def health(self):
-      print "Health test with SMART data \n"
-      print "1. Health test with smartctl \n"
-      print "2. Open dd shell\n"
-      print "9. Back"
-      print "0. Quit" 
+      for m in self.checkHealthLabels:
+        print(m)
       choice = raw_input(" >>  ")
       choice = ['chkhealth' , choice.lower()]
       self.exec_menu(choice)
