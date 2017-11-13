@@ -9,7 +9,7 @@ from pySMART import DeviceList
 from utils.ConcereteWriter import ConcreteWriter
 
 
-class ChkHealth(object):
+class DiskInfo(object):
     '''
     Class for managing objects related to Disk Health through pySMART wrapper for smartmontools (https://www.smartmontools.org/)
     '''

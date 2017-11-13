@@ -38,7 +38,9 @@ if not args:
   print "You must specify an image."
   sys.exit(-1)
 
-print(args)
+# {'offset': 0, 'type': 'raw', 'fstype': None}
+#['\\\\.\\PHYSICALDRIVE1']
+
 img = images.SelectImage(options.type, args)
 
 try:

@@ -6,7 +6,8 @@ Created on 23 ott 2017
 import subprocess as sp  # for screen cleaning (cls)
 import sys
 from chkmnt.Chkmnt import Chkmnt
-from chkhealth.ChkHealth import ChkHealth
+from diskinfo.DiskInfo import DiskInfo
+from partitions.Partitions import Partitions
 from extractor.Extractor import Extractor
 
 class Menu(object):
@@ -23,8 +24,9 @@ class Menu(object):
   
   mainMenuLabels = ["Please choose the action you want to launch:", 
                            "1. Check and Deactivate AUTOMOUNT", 
-                           "2. Perform SMART Health Test",
-                           "3. Extract Timelines",
+                           "2. Device information and SMART data",
+                           "3. Get logical structure of a device",
+                           "4. Extract Time-lines",
                            "\n0. Quit"]
   
   checkMountLabels = ["Before connecting the Disk disable Windows AUTOMOUNT:",
@@ -34,12 +36,20 @@ class Menu(object):
                               "9. Back",
                               "0. Quit"
                               ]
-  checkHealthLabels = ["Perform SMART Health Test:",
-                              "1. SMART Health test with smartctl",
+  checkHealthLabels = ["Perform SMART Health Test:", #TODO add disk info entry
+                              "1. SMART Health test with smartctl (smartmontools)",
                               "2. Open dd shell\n",
                               "9. Back",
                               "0. Quit"
                               ]
+  
+  partitionsLabels = ["Get device logical structure",
+                      "1. Get partitioning information",
+                      "9. Back",
+                      "0. Quit"
+    
+    ]
+  
   extractorLabels = ["Choose the artifacts to extract:",
                               "1. Timeline (TSK fls)",
                               "2. Super-timeline (log2timeline)",
@@ -55,8 +65,10 @@ class Menu(object):
     '''
     
     self.__checkMount = Chkmnt()
-    self.__checkHealth = ChkHealth()
+    self.__checkHealth = DiskInfo()
+    self.__partitions = Partitions()
     self.__extractor = Extractor()
+
     
     self.__chkmnt_menu = {
         '1':self.__checkMount.check,
@@ -80,6 +92,13 @@ class Menu(object):
         '9':self.back,
         '0':self.exit,
     }
+    
+    self.__partitions_menu = {
+        '1':self.__partitions.getInfo,
+        '2':self.__partitions.getInfo,
+        '9':self.back,
+        '0':self.exit,
+    }
 
     # Menu definition
     self.__menu_actions = {
@@ -88,7 +107,8 @@ class Menu(object):
         '2': self.health,
         '3': self.extract,
         'chkmnt': self.__chkmnt_menu,
-        'chkhealth': self.__chkHealth_menu,
+        'diskinfo': self.__chkHealth_menu,
+        'partitions': self.__partitions_menu,
         'extract': self.__extractor_menu,
         '9': self.back,
         '0': self.exit,
@@ -154,7 +174,16 @@ class Menu(object):
       for m in self.checkHealthLabels:
         print(m)
       choice = raw_input(" >>  ")
-      choice = ['chkhealth' , choice.lower()]
+      choice = ['diskinfo' , choice.lower()]
+      self.exec_menu(choice)
+      return
+
+  # Menu for logical disk structure
+  def partitions(self):
+      for m in self.partitionsLabels:
+        print(m)
+      choice = raw_input(" >>  ")
+      choice = ['partitions' , choice.lower()]
       self.exec_menu(choice)
       return
     
