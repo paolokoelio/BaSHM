@@ -203,6 +203,8 @@ def Main():
       default=False, help="List subdirectories recursively.")
 
   options = args_parser.parse_args()
+  print("YO")
+  print(options)
 
   if not options.images:
     print('No storage media image or device was provided.')
@@ -219,9 +221,9 @@ def Main():
 
   fls.open_image(options.image_type, options.images)
 
-#   VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
+  VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
 #   VOL = ['D:\FTK\win10_C.001']
-#   fls.open_image(options.image_type, VOL)
+  fls.open_image(options.image_type, VOL)
 
   fls.open_file_system(options.offset)
 

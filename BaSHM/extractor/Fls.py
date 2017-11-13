@@ -10,17 +10,20 @@ Class responsible for iterating through the selected image and construct a timel
 # Copyright 2011, Michael Cohen <scudette@gmail.com>.
 #     http://www.apache.org/licenses/LICENSE-2.0
 
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+
 import argparse
 import gc
 import pdb
 import sys
 import time
+import traceback
 
-import examples.images
+from examples import images
 import pytsk3
 
-import stat
-
+from utils.mode_convert import convert_to_symbolic
 
 
 class Fls(object):
@@ -76,6 +79,32 @@ class Fls(object):
     self._print = False
     self._fout = None
 
+  def filemode(self, m):
+      '''
+      Mode m to be converted
+      '''
+      oExec = bool(m & 0001)
+      oWrite = bool(m & 0002)
+      oRead = bool(m & 0004)
+      gExec = bool(m & 0010)
+      gWrite = bool(m & 0020)
+      gRead = bool(m & 0040)
+      otExec = bool(m & 0100)
+      otWrite = bool(m & 0200)
+      otRead = bool(m & 0400)
+      
+      modes = {oExec:'e',
+               oWrite:'w',
+               oRead:'r',
+               gExec:'e',
+               gWrite:'w',
+               gRead:'r',
+               otExec: 'e',
+               otWrite: 'w',
+               otRead: 'r',
+               }
+      
+      return str()
 
   def list_directory(self, directory, stack=None):
     stack.append(directory.info.fs_file.meta.addr)
@@ -143,12 +172,10 @@ class Fls(object):
     if not self._print:
       self._fout.close()
 
-
   def parse_options(self, options):
     self._long_listing = getattr(options, "long_listing", False)
     self._recursive = getattr(options, "recursive", False)
     self._print = getattr(options, "print", False)
-
 
   def print_directory_entry(self, directory_entry, prefix=""):
       meta = directory_entry.info.meta
@@ -180,19 +207,21 @@ class Fls(object):
           else:
             filename = name.name.decode("utf-8")
 
-          times = [meta.crtime, meta.ctime,meta.mtime,meta.atime]
+          times = [meta.crtime, meta.ctime, meta.mtime, meta.atime]
 
-          #choppiamo il primo char perché viene '?'
-          mode = stat.filemode(int(meta.mode))[1:]
+#           choppiamo il primo char perche' viene '?'
+#           no filemode attribute for python2.7, thus custom method         
+#           mode = self.filemode(meta.mode)[1:]
+          mode = convert_to_symbolic(meta.mode)
 
-          permissions = "{0}{1}".format(directory_entry_type,mode)
+          permissions = "{0}{1}".format(directory_entry_type, ''.join(mode))
 
-          md5 = 0 #TODO
+          md5 = 0  # TODO
 
           if meta and name:
             out = "{0}|{1}|{2}|{3}|{4:d}|{5:d}|{6:d}|{7:d}|{8:d}|{9:d}|{10:d}".format(
-                  md5, filename, inode, permissions, meta.uid,meta.gid, meta.size,
-                  int(times[0]), int(times[1]), int(times[2]),int(times[3]))
+                  md5, filename, inode, permissions, meta.uid, meta.gid, meta.size,
+                  int(times[0]), int(times[1]), int(times[2]), int(times[3]))
 
             if self._print:
               print(out)
@@ -201,98 +230,42 @@ class Fls(object):
             
             # pass
 
-
-def Main():
-  """The main program function.
-
-  Returns:
-    A boolean containing True if successful or False if not.
-  """
-  args_parser = argparse.ArgumentParser(description=(
-      "Lists a file system in a storage media image or device."))
-
-  args_parser.add_argument(
-      "images", nargs="+", metavar="IMAGE", action="store", type=str,
-      default=None, help=("Storage media images or devices."))
-
-  args_parser.add_argument(
-      "inode", nargs="?", metavar="INODE", action="store",
-      type=str, default=None, help=(
-          "The inode or path to list. If [inode] is not given, the root "
-          "directory is used"))
-
-  # TODO: not implemented.
-  # args_parser.add_argument(
-  #     "-f", "--fstype", metavar="TYPE", dest="file_system_type",
-  #     action="store", type=str, default=None, help=(
-  #         "The file system type (use \"-f list\" for supported types)"))
-
-  args_parser.add_argument(
-      "-i", "--imgtype", metavar="TYPE", dest="image_type", type=str,
-      choices=["ewf", "qcow", "raw"], default="raw", help=(
-          "Set the storage media image type."))
-
-  # TODO: not implemented.
-  # args_parser.add_argument(
-  #     "-l", dest="long_listing", action="store_true", default=False,
-  #     help="Display long version (like ls -l)")
-
-  args_parser.add_argument(
-      "-o", "--offset", metavar="OFFSET", dest="offset", action="store",
-      type=int, default=0, help="The offset into image file (in bytes)")
-
-  args_parser.add_argument(
-      "-r", "--recursive", dest="recursive", action="store_true",
-      default=False, help="List subdirectories recursively.")
+  def extractTimel(self):
+    
+    print("Extracting timeline...\n")
+    
+    VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
+    # VOL = ['\\\?\Volume{52c225e9-0000-0000-0000-50f90d000000}']
+    # VOL = ['D:\FTK\win10_C.001']
+    
+    # image_type='raw', images=['yo'], images=['yo'], offset=0, print=False, recursive=False
+    options = {'image_type':'raw',
+               'images':VOL,
+               'offset':0,
+               'inode':'/',
+               'print':False,
+               'recursive':False,
+               }
+    
+    self.open_image(options['image_type'], options['images'])
   
-  args_parser.add_argument(
-      "-p", "--print", dest="print", action="store_true",
-      default=False, help="Print output to stdout.")
+    try:
+      filename = '../files_tmp/body.txt'
+      
+      self.open_fout(filename)
+    
+      self.open_file_system(options['offset'])
 
-  #option is a dict 
-  # options = {'offset': 0, 'recursive': 'True', 'image_type': None}
-  options = args_parser.parse_args()
-
-  if not options.images:
-    print('No storage media image or device was provided.')
-    print('')
-    args_parser.print_help()
-    print('')
-    return False
-
-  print(options.images)
-  #return True
+      directory = self.open_directory(options['inode'])
+    
+      # Iterate over all files in the directory and print their name.
+      # What you get in each iteration is a proxy object for the TSK_FS_FILE
+      # struct - you can further dereference this struct into a TSK_FS_NAME
+      # and TSK_FS_META structs.
+      self.list_directory(directory, [])
+    
+      self.close_fout()
   
-  fls = Fls()
-  fls.parse_options(options)
-
-#   fls.open_image(options.image_type, options.images)
-
-  VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
-  # VOL = ['D:\FTK\win10_C.001']
-  fls.open_image(options.image_type, VOL)
-
-  filename = 'body.txt'
-
-  fls.open_fout(filename)
-
-  fls.open_file_system(options.offset)
-
-  directory = fls.open_directory(options.inode)
-
-  # Iterate over all files in the directory and print their name.
-  # What you get in each iteration is a proxy object for the TSK_FS_FILE
-  # struct - you can further dereference this struct into a TSK_FS_NAME
-  # and TSK_FS_META structs.
-  fls.list_directory(directory, [])
-
-  fls.close_fout()
-
-  return True
-
-
-if __name__ == '__main__':
-  if not Main():
-    sys.exit(1)
-  else:
-    sys.exit(0)
+    except Exception, e:
+        traceback.print_exc()
+    return

@@ -73,11 +73,15 @@ def main(argv=None):
         
         menu = Menu()
         menu.main_menu()
+#         test
+#         from extractor.Extractor import Extractor #test
+#         e = Extractor()
+#         e.timel()
 
         print("Exiting correctly.")
 
 
-    except Exception, e:
+    except Exception as e:
         traceback.print_exc()
         #indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")

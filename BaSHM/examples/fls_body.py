@@ -186,8 +186,10 @@ class Fls(object):
 
           times = [meta.crtime, meta.ctime,meta.mtime,meta.atime]
 
-          #choppiamo il primo char perché viene '?'
-          mode = stat.filemode(int(meta.mode))[1:]
+          #choppiamo il primo char perche' viene '?'
+          #no filemode attribute for python2.7
+          #mode = stat.filemode(int(meta.mode))[1:]
+          mode = stat.ST_MODE(int(meta.mode))[1:]
 
           permissions = "{0}{1}".format(directory_entry_type,mode)
 
@@ -267,10 +269,12 @@ def Main():
   
   fls = Fls()
   fls.parse_options(options)
-
+  
+  print options
 #   fls.open_image(options.image_type, options.images)
 
   VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
+  #VOL = ['\\1?\Volume{52c225e9-0000-0000-0000-50f90d000000}']
   # VOL = ['D:\FTK\win10_C.001']
   fls.open_image(options.image_type, VOL)
 

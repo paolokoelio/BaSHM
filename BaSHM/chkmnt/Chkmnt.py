@@ -5,7 +5,7 @@ Created on 24 ott 2017
 '''
 
 import subprocess as sp
-import ConfigParser
+import ConfigParser #import not compatible with python3, should be configparser
 # from bashm.menu import Menu
 
 
@@ -38,14 +38,16 @@ class Chkmnt(object):
       print('Issuing command: "' + self.__config.get('commands', 'diskpart')
             + self.__config.get('paths', 'static')
             + self.__config.get('names', 'chkmnt') +'"' )
-      print('Needs to be run as Priviledged User')
+      #print('Needs to be run as Priviledged User')
       
       try:
-          sp.check_output(self.__config.get('commands', 'diskpart') + " "
+          sp.check_call(self.__config.get('commands', 'diskpart') + " "
             + self.__config.get('paths', 'static')
             + self.__config.get('names', 'chkmnt'),
-             stderr=sp.STDOUT,
-             shell=True)
+            #stdout=sp.STDOUT,
+            stderr=sp.STDOUT,
+            shell=True)
+          print('\n')
       except sp.CalledProcessError:
           print("Something went wrong. You may retry this action." + " ret_code: " + str(sp.returncode) + "\n")
       

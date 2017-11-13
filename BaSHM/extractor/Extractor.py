@@ -12,42 +12,42 @@ class Extractor(object):
     '''
     classdocs
     '''
-
+    __fls = None
 
     def __init__(self):
-        '''
-        Constructor
-        '''
+      '''
+      Constructor
+      '''
+      self.__fls = Fls()
+      
+    def init_menu(self):
+      
+      print('Choose the device to scan:\n')
+      self.__devlist = None
+      
+      i = 1
+      for device in self.__devlist.devices:
+        
+#         self.__menu_devs[i] = "mod:%s sn:%s, %s device on /dev/%s" % (
+#             device.model, device.serial, device.interface.upper(), device.name)
+
+        print( "%d. %s serial:%s, %s device on /dev/%s" % (
+            i, device.model, device.serial, device.interface.upper(), device.name) )
+        
+        i = i + 1
+      #print (self.__menu_devs)
+      
+      ch = raw_input(" >>  ")
+      self.exec_menu(ch)
+    
     def timel(self):
       '''
       Perform timeline extraction
       '''
-      fls = Fls()
-      fls.parse_options(options)
+      print("Launching TSK fls module..\n")
+      self.__fls.extractTimel()
     
-    #   fls.open_image(options.image_type, options.images)
-    
-      VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
-      # VOL = ['D:\FTK\win10_C.001']
-      fls.open_image(options.image_type, VOL)
-    
-      filename = 'body.txt'
-    
-      fls.open_fout(filename)
-    
-      fls.open_file_system(options.offset)
-    
-      directory = fls.open_directory(options.inode)
-    
-      # Iterate over all files in the directory and print their name.
-      # What you get in each iteration is a proxy object for the TSK_FS_FILE
-      # struct - you can further dereference this struct into a TSK_FS_NAME
-      # and TSK_FS_META structs.
-      fls.list_directory(directory, [])
-    
-      fls.close_fout()
-    
-      return True
+      return
     
     def stimel(self):
       '''

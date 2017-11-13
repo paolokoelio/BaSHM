@@ -38,7 +38,8 @@ if not args:
   print "You must specify an image."
   sys.exit(-1)
 
-img = images.SelectImage("raw", args)
+print(args)
+img = images.SelectImage(options.type, args)
 
 try:
   volume = pytsk3.Volume_Info(img)

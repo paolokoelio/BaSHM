@@ -7,6 +7,7 @@ import subprocess as sp  # for screen cleaning (cls)
 import sys
 from chkmnt.Chkmnt import Chkmnt
 from chkhealth.ChkHealth import ChkHealth
+from extractor.Extractor import Extractor
 
 class Menu(object):
   '''
@@ -15,6 +16,7 @@ class Menu(object):
   # some declarations
   __checkMount = None
   __checkHealth = None
+  __extractor = None
   
   # Main definition
   __menu_actions = {}
@@ -22,18 +24,26 @@ class Menu(object):
   mainMenuLabels = ["Please choose the action you want to launch:", 
                            "1. Check and Deactivate AUTOMOUNT", 
                            "2. Perform SMART Health Test",
+                           "3. Extract Timelines",
                            "\n0. Quit"]
   
-  checkMountLabels = ["Before connecting the Disk disable Windows AUTOMOUNT\n",
+  checkMountLabels = ["Before connecting the Disk disable Windows AUTOMOUNT:",
                               "1. Check AUTOMOUNT",
                               "2. Disable AUTOMOUNT",
                               "3. Enable AUTOMOUNT",
                               "9. Back",
                               "0. Quit"
                               ]
-  checkHealthLabels = ["Perform SMART Health Test",
-                              "1. SMART Health test with smartctl \n",
+  checkHealthLabels = ["Perform SMART Health Test:",
+                              "1. SMART Health test with smartctl",
                               "2. Open dd shell\n",
+                              "9. Back",
+                              "0. Quit"
+                              ]
+  extractorLabels = ["Choose the artifacts to extract:",
+                              "1. Timeline (TSK fls)",
+                              "2. Super-timeline (log2timeline)",
+                              "3. Browse only (TODO)",
                               "9. Back",
                               "0. Quit"
                               ]
@@ -46,19 +56,27 @@ class Menu(object):
     
     self.__checkMount = Chkmnt()
     self.__checkHealth = ChkHealth()
-
-    
-    self.__chkHealth_menu = {
-        '1':self.__checkHealth.initialize,
-        '2':self.__checkHealth.initialize,
-        '9':self.back,
-        '0':self.exit,
-    }
+    self.__extractor = Extractor()
     
     self.__chkmnt_menu = {
         '1':self.__checkMount.check,
         '2':self.__checkMount.deactmnt,
         '3':self.__checkMount.actmnt,
+        '9':self.back,
+        '0':self.exit,
+    }
+    
+    self.__chkHealth_menu = {
+        '1':self.__checkHealth.initialize,
+        '2':self.__checkHealth.initialize, #TODO
+        '9':self.back,
+        '0':self.exit,
+    }
+    
+    self.__extractor_menu = {
+        '1':self.__extractor.timel,
+        '2':self.__extractor.stimel,
+        '3':self.__extractor.browse,
         '9':self.back,
         '0':self.exit,
     }
@@ -68,8 +86,10 @@ class Menu(object):
         'main_menu': self.main_menu,
         '1': self.chkmnt,
         '2': self.health,
+        '3': self.extract,
         'chkmnt': self.__chkmnt_menu,
         'chkhealth': self.__chkHealth_menu,
+        'extract': self.__extractor_menu,
         '9': self.back,
         '0': self.exit,
     }
@@ -100,7 +120,7 @@ class Menu(object):
               self.get_in_dic(ch)
               # self.__menu_actions[ch]()
           except KeyError:
-              print "Invalid selection, please try again.\n"
+              print("Invalid selection, please try again.\n")
               self.__menu_actions['main_menu']()
       return
   
@@ -119,18 +139,8 @@ class Menu(object):
     #get back to main menu by default
     mn['main_menu']()
     return
-  
-#   def launcher(self, action):
-#       if action == '':
-#           self.__menu_actions['main_menu']()
-#       else:
-#           try:
-#               self.__checkMount[action]()
-#           except KeyError:
-#               print "Invalid action, please try again.\n"
-#               self.__menu_actions['main_menu']()
    
-  # Menu for check AUTOMOUNT
+  # Menu for check AUTOMOUNT (TODO refactoring method duplication
   def chkmnt(self):
       for m in self.checkMountLabels:
         print(m)
@@ -139,13 +149,21 @@ class Menu(object):
       self.exec_menu(choice)
       return
    
-   
   # Menu for Health check with SMART
   def health(self):
       for m in self.checkHealthLabels:
         print(m)
       choice = raw_input(" >>  ")
       choice = ['chkhealth' , choice.lower()]
+      self.exec_menu(choice)
+      return
+    
+  # Menu for extracting timelines
+  def extract(self):
+      for m in self.extractorLabels:
+        print(m)
+      choice = raw_input(" >>  ")
+      choice = ['extract' , choice.lower()]
       self.exec_menu(choice)
       return
    
