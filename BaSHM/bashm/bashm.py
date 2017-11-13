@@ -22,6 +22,7 @@ import os
 
 from menu import Menu
 from optparse import OptionParser
+from partitions.Partitions import Partitions
 
 
 __all__ = []
@@ -71,12 +72,12 @@ def main(argv=None):
         # Launch main menu
         print("Welcome to BaHSM\n")
         
-        menu = Menu()
-        menu.main_menu()
+#         menu = Menu()
+#         menu.main_menu()
 #         test
-#         from extractor.Extractor import Extractor #test
-#         e = Extractor()
-#         e.timel()
+        from partitions.Partitions import Partitions #test
+        e = Partitions()
+        e.getInfo()
 
         print("Exiting correctly.")
 

@@ -5,7 +5,7 @@ Created on 27 ott 2017
 '''
 
 from __future__ import print_function
-from pySMART import DeviceList
+from pySMART import DeviceList #smartmontools wrapper
 from utils.ConcereteWriter import ConcreteWriter
 
 

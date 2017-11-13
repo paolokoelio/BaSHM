@@ -5,11 +5,12 @@ Created on 24 ott 2017
 '''
 
 import subprocess as sp
-import ConfigParser #import not compatible with python3, should be configparser
+import ConfigParser  # import not compatible with python3, should be configparser
+import sys, traceback
 # from bashm.menu import Menu
 
-
 CONFIG_PATH = '..\config\config.cfg'
+
 
 class Chkmnt(object):
     '''
@@ -22,60 +23,50 @@ class Chkmnt(object):
       '''
       Constructor
       '''
-          #try:
-      config = ConfigParser.ConfigParser()
-      config.read(CONFIG_PATH)
-#         
-      self.__config = config
-#         except Exception, e:
-#           sys.stderr.write(repr(e) + " in config file.\n")
-          #traceback.print_exc()
-        
-        #yolo
+      try:
+        config = ConfigParser.ConfigParser()
+        config.read(CONFIG_PATH)      
+        self.__config = config
+      except Exception as e:
+        sys.stderr.write(repr(e) + " in config file.\n")
+        traceback.print_exc()
+           
     def check(self):
+      cmd = ''.join([self.__config.get('commands', 'diskpart'),
+            ' ',
+            self.__config.get('paths', 'static'),
+            self.__config.get('names', 'chkmnt')])
+
+      self.run_cmd(cmd)
+
       
-      #out = sp.check_output(['diskpart','/s','\win_scripts\chkmnt.txt'])
-      print('Issuing command: "' + self.__config.get('commands', 'diskpart')
-            + self.__config.get('paths', 'static')
-            + self.__config.get('names', 'chkmnt') +'"' )
-      #print('Needs to be run as Priviledged User')
+    def deactmnt(self): 
+      cmd = self.__config.get('commands', 'deactmnt')
+      
+      out = self.run_cmd(cmd)
+      if out == 0:
+        print('AUTOMOUNT disabled successfully.\nYou you can now connect the Disk safely.\n')
+
+
+    def actmnt(self):
+      cmd = self.__config.get('commands', 'actmnt')
+      if self.run_cmd(cmd) == 0:
+        print('AUTOMUNT enabled successfully.\n')
+      
+    def run_cmd(self,cmd):
+      '''
+        Prints and runs specified command
+      '''
+      print('Needs to be run as Privileged User.')
+      print('Issuing command: "' + cmd + '".')
       
       try:
-          sp.check_call(self.__config.get('commands', 'diskpart') + " "
-            + self.__config.get('paths', 'static')
-            + self.__config.get('names', 'chkmnt'),
-            #stdout=sp.STDOUT,
+          out = sp.check_call(cmd,
+            # stdout=sp.STDOUT,
             stderr=sp.STDOUT,
             shell=True)
           print('\n')
-      except sp.CalledProcessError:
-          print("Something went wrong. You may retry this action." + " ret_code: " + str(sp.returncode) + "\n")
+      except sp.CalledProcessError as e:
+          print("\nSomething went wrong. You may retry this action." + " ret_code: " + str(e.returncode) + "\n")
       
-      return
-      
-    #TODO exception handling
-    def deactmnt(self): 
-      print('Issuing command: "' + self.__config.get('commands', 'deactmnt'))
-      print('needs to be run as Priviledged User')
-  
-      out = sp.call(self.__config.get('commands', 'deactmnt'),
-             shell=True)
-      
-      print(out)
-      if out == 0:
-        print('AUTOMOUNT disabled successfully')
-        print('Now you can connect the Disk')
-      
-      return
-
-    #TODO exception handling
-    def actmnt(self):
-      print('Issuing command: "' + self.__config.get('commands', 'actmnt'))
-      print('needs to be run as Priviledged User')
-  
-      out = sp.call(self.__config.get('commands', 'actmnt'),
-             shell=True)
-      
-      print(out)
-      return
-      
+      return out
