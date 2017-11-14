@@ -69,15 +69,15 @@ def main(argv=None):
 #         if opts.outfile:
 #             print("outfile = %s" % opts.outfile)
 
-        # Launch main menu
+#         Launch main menu
         print("Welcome to BaHSM\n")
         
-#         menu = Menu()
-#         menu.main_menu()
+        menu = Menu()
+        menu.main_menu()
 #         test
-        from partitions.Partitions import Partitions #test
-        e = Partitions()
-        e.getInfo()
+#         from partitions.Partitions import Partitions #test
+#         e = Partitions()
+#         e.init_menu()
 
         print("Exiting correctly.")
 

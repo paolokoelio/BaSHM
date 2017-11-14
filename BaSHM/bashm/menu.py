@@ -18,6 +18,7 @@ class Menu(object):
   __checkMount = None
   __checkHealth = None
   __extractor = None
+  __partitions = None
   
   # Main definition
   __menu_actions = {}
@@ -94,8 +95,8 @@ class Menu(object):
     }
     
     self.__partitions_menu = {
-        '1':self.__partitions.getInfo,
-        '2':self.__partitions.getInfo,
+        '1':self.__partitions.init_menu,
+        '2':self.__partitions.init_menu,
         '9':self.back,
         '0':self.exit,
     }

@@ -73,8 +73,8 @@ class DiskInfo(object):
     def exec_menu(self, ch):
         if ch == '':
             pass
-        elif ch == 0:
-            self.chkhealth()
+        elif int(ch) == 0:
+            return
         else:
             try:
                 #select the device to test, -1 because in menu prints at 1
