@@ -11,33 +11,37 @@ import ConfigParser  # import not compatible with python3, should be configparse
 
 CONFIG_PATH = '..\config\config.cfg'
 
+
 class Partitions(object):
     '''
     Handles logical structure information of a device
     '''
-
     __devlist = None
     __mmls = None
     __config = None
+    _selDev = None
+    __selOffset = 0
+    __part_list = None
 
     def __init__(self):
       '''
       Constructor
       '''
+      
       try:
         config = ConfigParser.ConfigParser()
         config.read(CONFIG_PATH)      
         self.__config = config
       except Exception as e:
         sys.stderr.write(repr(e) + " in config file.\n")
-        traceback.print_exc()
-  
+        traceback.print_exc()  
+        
     def init_menu(self):
       
       print('Choose a device:\n')
       self.__devlist = self.getDevices()
       
-      #print(self.__devlist)
+      # print(self.__devlist)
       
       i = 1
       for device in self.__devlist:
@@ -70,7 +74,7 @@ class Partitions(object):
 
       tmp = []
       for disk in disks:  
-        result={}
+        result = {}
         for row in disk.split('\n'):
             if ': ' in row:
                 key, value = row.split(': ')
@@ -79,12 +83,16 @@ class Partitions(object):
 
       return tmp
     
-    def runMmls(self,ch):
+    def runMmls(self, ch):
       
       self.__mmls = Mmls()
-      self.__mmls.set_dev_path(self.__devlist[int(ch)-1]['DeviceID'])
-      self.__mmls.set_desc(str(self.__devlist[int(ch)-1]['Model']))
-      self.__mmls.run()
+      self.__mmls.set_dev_path(self.__devlist[int(ch) - 1]['DeviceID'])
+      self.__mmls.set_desc(str(self.__devlist[int(ch) - 1]['Model']))
+      return self.__mmls.mmls()
+    
+    # TODO future work open shell with typed mmls (allows for original use of mmls)    
+    def openShell(self):
+      return
     
     def exec_menu(self, ch):
         if ch == '':
@@ -93,18 +101,17 @@ class Partitions(object):
             return
         else:
             try:
-                # run mmls tool against the specified device
-                self.runMmls(ch)
+                # mmls tool against the specified device
+                self._selDev = self.__devlist[int(ch) - 1]
+                self.__part_list = self.runMmls(ch)
             except KeyError:
                 print("Invalid selection, please try again.\n")
-                pass
-        return
 
     def run_cmd(self, cmd):
       '''
         Prints and runs specified command
       '''
-      print('Needs to be run as Privileged User.')
+      print('Needs to be mmls as Privileged User.')
       print('Issuing command: "' + str(''.join(cmd)) + '".')
       
       try:
@@ -117,3 +124,24 @@ class Partitions(object):
           print("\nSomething went wrong. You may retry this action." + " ret_code: " + str(e.returncode) + "\n")
       
       return out
+    
+    def get_devlist(self):
+      return self.__devlist    
+
+    def get_sel_dev(self):
+      return self._selDev
+
+    def set_sel_dev(self, value):
+      self._selDev = value
+      
+    def get_sel_offset(self):
+      return self.__selOffset
+
+    def set_sel_offset(self, value):
+      self.__selOffset = value
+
+    def get_mmls(self):
+      return self.__mmls    
+    
+    def get_part_list(self):
+      return self.__part_list

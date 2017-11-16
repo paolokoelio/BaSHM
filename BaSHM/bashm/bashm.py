@@ -101,7 +101,7 @@ if __name__ == "__main__":
         import cProfile
         import pstats
         profile_filename = 'bashm.bashm_profile.txt'
-        cProfile.run('main()', profile_filename)
+        cProfile.mmls('main()', profile_filename)
         statsfile = open("profile_stats.txt", "wb")
         p = pstats.Stats(profile_filename, stream=statsfile)
         stats = p.strip_dirs().sort_stats('cumulative')

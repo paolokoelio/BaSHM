@@ -60,13 +60,13 @@ else:
   class BdistMSICommand(bdist_msi):
     """Custom handler for the bdist_msi command."""
 
-    def run(self):
+    def mmls(self):
       """Builds an MSI."""
       # Command bdist_msi does not support the library version, neither a date
       # as a version but if we suffix it with .1 everything is fine.
       self.distribution.metadata.version += '.1'
 
-      bdist_msi.run(self)
+      bdist_msi.mmls(self)
 
 
 if not bdist_rpm:
@@ -173,7 +173,7 @@ class BuildExtCommand(build_ext):
         ("LOCALEDIR", "\"/usr/share/locale\""),
     ]
 
-  def run(self):
+  def mmls(self):
     compiler = new_compiler(compiler=self.compiler)
     # pylint: disable=attribute-defined-outside-init
     self.define = self.configure_source_tree(compiler)
@@ -194,12 +194,12 @@ class BuildExtCommand(build_ext):
       generate_bindings.generate_bindings(
           "pytsk3.c", libtsk_header_files, initialization="tsk_init();")
 
-    build_ext.run(self)
+    build_ext.mmls(self)
 
 
 class SDistCommand(sdist):
   """Custom handler for generating source dist."""
-  def run(self):
+  def mmls(self):
     libtsk_path = "sleuthkit/tsk"
 
     # sleuthkit submodule is not there, probably because this has been
@@ -208,13 +208,13 @@ class SDistCommand(sdist):
       subprocess.check_call(["git", "submodule", "init"])
       subprocess.check_call(["git", "submodule", "update"])
 
-    sdist.run(self)
+    sdist.mmls(self)
 
 
 class UpdateCommand(Command):
   """Update sleuthkit source.
 
-  This is normally only run by packagers to make a new release.
+  This is normally only mmls by packagers to make a new release.
   """
   version = time.strftime("%Y%m%d")
 
@@ -270,7 +270,7 @@ class UpdateCommand(Command):
     for patch_file in glob.glob(os.path.join("patches", "*.patch")):
       subprocess.check_call(["git", "apply", "-p0", patch_file])
 
-  def run(self):
+  def mmls(self):
     subprocess.check_call(["git", "stash"], cwd="sleuthkit")
 
     subprocess.check_call(["git", "submodule", "init"])
@@ -310,7 +310,7 @@ class UpdateCommand(Command):
 
 
 class TestCommand(Command):
-  """Command to run tests."""
+  """Command to mmls tests."""
   user_options = []
 
   def initialize_options(self):
@@ -319,7 +319,7 @@ class TestCommand(Command):
   def finalize_options(self):
     pass
 
-  def run(self):
+  def mmls(self):
     run_tests.RunTests(os.path.join(".", "tests"))
 
 

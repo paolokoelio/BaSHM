@@ -53,18 +53,6 @@ class Fls(object):
       pytsk3.TSK_FS_META_TYPE_WHT: "w",
       pytsk3.TSK_FS_META_TYPE_VIRT: "v"}
 
-  # META_MODE_LOOKUP = {
-  #     pytsk3.TSK_FS_META_MODE_UNSPECIFIED: "-",
-  #     pytsk3.TSK_FS_META_MODE_IRUSR: "r",
-  #     pytsk3.TSK_FS_META_MODE_IWUSR: "w",
-  #     pytsk3.TSK_FS_META_MODE_IXUSR: "x",
-  #     pytsk3.TSK_FS_META_MODE_IRGRP: "r",
-  #     pytsk3.TSK_FS_META_MODE_IWGRP: "w",
-  #     pytsk3.TSK_FS_META_MODE_IXGRP: "x",
-  #     pytsk3.TSK_FS_META_MODE_IROTH: "r",
-  #     pytsk3.TSK_FS_META_MODE_IWOTH: "w",
-  #     pytsk3.TSK_FS_META_MODE_IXOTH: "x"}
-
   ATTRIBUTE_TYPES_TO_PRINT = [
       pytsk3.TSK_FS_ATTR_TYPE_NTFS_IDXROOT,
       pytsk3.TSK_FS_ATTR_TYPE_NTFS_DATA,
@@ -78,6 +66,15 @@ class Fls(object):
     self._recursive = False
     self._print = False
     self._fout = None
+    
+    #Default args
+    self.__image_type = 'raw'
+    self.__images = None
+    self.__offset = 0
+    self.__inode = '/'
+    self.__print = False
+    self.__recursive = False
+    self.__filename = None
 
   def filemode(self, m):
       '''
@@ -233,18 +230,20 @@ class Fls(object):
   def extractTimel(self):
     
     print("Extracting timeline...\n")
+    print("Issuing TSK command: fls -f ntfs -i {} -o {} {} {}\n".format(self.__image_type, self.__offset, ''.join(self.__images), self.__inode))
     
-    VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
+    # VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
+    # self._images = ['\\\.\PHYSICALDRIVE1']
     # VOL = ['\\\?\Volume{52c225e9-0000-0000-0000-50f90d000000}']
     # VOL = ['D:\FTK\win10_C.001']
     
     # image_type='raw', images=['yo'], images=['yo'], offset=0, print=False, recursive=False
-    options = {'image_type':'raw',
-               'images':VOL,
-               'offset':0,
-               'inode':'/',
-               'print':False,
-               'recursive':False,
+    options = {'image_type':self.__image_type,
+               'images':self.__images,
+               'offset':self.__offset,
+               'inode':self.__inode,
+               'print':self.__print,
+               'recursive':self.__recursive,
                }
     
     self.open_image(options['image_type'], options['images'])
@@ -266,6 +265,48 @@ class Fls(object):
     
       self.close_fout()
   
-    except Exception, e:
+    except Exception as e:
         traceback.print_exc()
     return
+
+  def get_recursive(self):
+    return self.__recursive
+
+
+  def get_image_type(self):
+    return self.__image_type
+
+
+  def get_images(self):
+    return self.__images
+
+
+  def get_offset(self):
+    return self.__offset
+
+
+  def get_inode(self):
+    return self.__inode
+
+
+  def set_recursive(self, value):
+    self.__recursive = value
+
+
+  def set_image_type(self, value):
+    self.__image_type = value
+
+
+  def set_images(self, value):
+    self.__images = value
+
+
+  def set_offset(self, value):
+    self.__offset = value
+
+
+  def set_inode(self, value):
+    self.__inode = value
+  
+  def set_filename(self, value):
+    self.__filename = value

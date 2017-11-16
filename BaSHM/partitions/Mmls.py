@@ -20,13 +20,15 @@ class Mmls(object):
     __fstype = 'ntfs'
     __block_size = 512  # KB, assumed default block size
     __desc = None
+    __part_list = []
+    __factor = 1024 * 1024
 
     def __init__(self):
         '''
         Constructor
         '''
     
-    def run(self):
+    def mmls(self):
       
       img = images.SelectImage(self.__type, [self.__dev_path])
       
@@ -37,28 +39,39 @@ class Mmls(object):
 #         entries = {'addr':[],
 #                  'desc':[], 'start':[], 'start512':[], 'len':[]}
 #           list.append(entry)
-        print('Partition structure for: ' + self.__desc + '\n')
-        print('{0:<2} {1:<30}\t{2:>15} {3:>15}\t{4:>15}\t{5:>7}'.format('#', 'Desc', 'Start sector', 'Start block', 'Length', 'Size'))
+
         for part in volume:
 
 #           entry = {'addr':part.addr, 'desc':part.desc, 'start':int(part.start), 'start512':int(part.start * 512), 'len':int(part.len)}
 #           list.append(entry)
-          print('{:<2} {:<30}\t{:>15} {:>15}\t{:>15}\t{:>7} MB'.format(part.addr,
-                                                                  part.desc,
-                                                                  int(part.start),
-                                                                  int(part.start * self.__block_size),
-                                                                  int(part.len),
-                                                                  part.len * self.__block_size / (1024 * 1024),
-                                                                  )
-                )
+          self.__part_list.append([part.addr, part.desc,part.start,part.start * self.__block_size,part.len,part.len * self.__block_size / (self.__factor)])
+        
+        print('Partition structure for: ' + self.__desc + '\n')
+        print('{0:<2} {1:<30}\t{2:>15} {3:>15}\t{4:>15}\t{5:>7}'.format('#', 'Desc', 'Start sector', 'Start block', 'Length', 'Size'))
+        
+        for part in self.__part_list:
+          print('{:<2} {:<30}\t{:>15} {:>15}\t{:>15}\t{:>7} MB'.format(part[0],part[1],part[2],part[3],part[4],part[5]))
+#               )
+#         # print(part.addr, part.desc, "%ss(%s)" % (int(part.start), int(part.start * 512)), int(part.len)) #example alternative
+#       print('\n')
+          
+#           print('{:<2} {:<30}\t{:>15} {:>15}\t{:>15}\t{:>7} MB'.format(part.addr,
+#                                                                   part.desc,
+#                                                                   part.start,
+#                                                                   part.start * self.__block_size,
+#                                                                   part.len,
+#                                                                   part.len * self.__block_size / (1024 * 1024),
+#                                                                   )
+#                 )
           # print(part.addr, part.desc, "%ss(%s)" % (int(part.start), int(part.start * 512)), int(part.len)) #example alternative
         print('\n')
+#         print(self.__part_list)
               
       except IOError as e:
         print ("Error %s: Maybe specify a different image type "
                 % e)
       
-      return
+      return self.__part_list
     
     def set_all_params(self, path, offset, itype, fstype):
       self.__dev_path = path

@@ -39,13 +39,14 @@ class Menu(object):
                               ]
   checkHealthLabels = ["Perform SMART Health Test:", #TODO add disk info entry
                               "1. SMART Health test with smartctl (smartmontools)",
-                              "2. Open dd shell\n",
+                              "2. Open dd shell (future work)\n",
                               "9. Back",
                               "0. Quit"
                               ]
   
   partitionsLabels = ["Get device logical structure",
                       "1. Get partitioning information",
+                      "2. Open mmls shell (future work)",
                       "9. Back",
                       "0. Quit"
     
@@ -68,7 +69,7 @@ class Menu(object):
     self.__checkMount = Chkmnt()
     self.__checkHealth = DiskInfo()
     self.__partitions = Partitions()
-    self.__extractor = Extractor()
+    self.__extractor = Extractor(self.__partitions)
 
     
     self.__chkmnt_menu = {
@@ -96,7 +97,7 @@ class Menu(object):
     
     self.__partitions_menu = {
         '1':self.__partitions.init_menu,
-        '2':self.__partitions.init_menu,
+        '2':self.__partitions.openShell,
         '9':self.back,
         '0':self.exit,
     }
@@ -182,6 +183,7 @@ class Menu(object):
 
   # Menu for logical disk structure
   def partitions(self):
+      cls()
       for m in self.partitionsLabels:
         print(m)
       choice = raw_input(" >>  ")

@@ -60,5 +60,5 @@ for attr in f:
     print "Attribute %s, type %s, id %s" % (attr.info.name,
                                             attr.info.type,
                                             attr.info.id)
-    for run in attr:
-        print "   Blocks %s to %s (%s blocks)" % (run.addr, run.addr + run.len, run.len)
+    for mmls in attr:
+        print "   Blocks %s to %s (%s blocks)" % (mmls.addr, mmls.addr + mmls.len, mmls.len)
