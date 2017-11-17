@@ -38,8 +38,9 @@ class Menu(object):
                               "0. Quit"
                               ]
   checkHealthLabels = ["Perform SMART Health Test:", #TODO add disk info entry
-                              "1. SMART Health test with smartctl (smartmontools)",
-                              "2. Open dd shell (future work)\n",
+                              "1. Create case folder",
+                              "2. SMART Health test with smartctl (smartmontools)",
+                              "3. Open dd shell (future work)",
                               "9. Back",
                               "0. Quit"
                               ]
@@ -81,8 +82,9 @@ class Menu(object):
     }
     
     self.__chkHealth_menu = {
-        '1':self.__checkHealth.initialize,
-        '2':self.__checkHealth.initialize, #TODO
+        '1':self.__checkHealth.createCaseFolder,
+        '2':self.__checkHealth.initialize,
+        '3':self.__checkHealth.openDD, #TODO
         '9':self.back,
         '0':self.exit,
     }

@@ -39,7 +39,7 @@ class Mmls(object):
 #         entries = {'addr':[],
 #                  'desc':[], 'start':[], 'start512':[], 'len':[]}
 #           list.append(entry)
-
+        del self.__part_list[:]
         for part in volume:
 
 #           entry = {'addr':part.addr, 'desc':part.desc, 'start':int(part.start), 'start512':int(part.start * 512), 'len':int(part.len)}
@@ -71,7 +71,9 @@ class Mmls(object):
         print ("Error %s: Maybe specify a different image type "
                 % e)
       
-      return self.__part_list
+      out = self.__part_list
+      
+      return out
     
     def set_all_params(self, path, offset, itype, fstype):
       self.__dev_path = path

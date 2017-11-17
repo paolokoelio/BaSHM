@@ -47,7 +47,7 @@ class Extractor(object):
       self.__part_list = self.__partitions.get_part_list()
       
       ch = raw_input(" >>  ")
-      return self.exec_menu(ch)
+      self.exec_menu(ch)
     
     def timel(self):
       '''
@@ -84,8 +84,9 @@ class Extractor(object):
     def setOff(self, ch):
       
       # where offset in block is
-      off_index = 3      
-      self.__offset = self.__part_list[int(ch)][off_index]
+      off_index = 3
+      #print('{}'.format(self.__part_list[int(ch)]))
+      self.__offset = int(self.__part_list[int(ch)][off_index])
     
     def exec_menu(self, ch):
       if ch == '':

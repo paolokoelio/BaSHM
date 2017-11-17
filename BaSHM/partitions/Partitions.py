@@ -41,7 +41,7 @@ class Partitions(object):
       print('Choose a device:\n')
       self.__devlist = self.getDevices()
       
-      # print(self.__devlist)
+      # clean before issuing a new one
       
       i = 1
       for device in self.__devlist:
@@ -90,7 +90,7 @@ class Partitions(object):
       self.__mmls.set_desc(str(self.__devlist[int(ch) - 1]['Model']))
       return self.__mmls.mmls()
     
-    # TODO future work open shell with typed mmls (allows for original use of mmls)    
+#   TODO future work open shell with typed mmls (allows for original use of mmls)    
     def openShell(self):
       return
     
