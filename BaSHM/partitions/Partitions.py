@@ -72,16 +72,16 @@ class Partitions(object):
       # filter empty elements
       disks = filter(None, out)
 
-      tmp = []
+      out = []
       for disk in disks:  
         result = {}
         for row in disk.split('\n'):
             if ': ' in row:
                 key, value = row.split(': ')
                 result[key.strip(' .')] = value.strip()
-        tmp.append(result)
+        out.append(result)
 
-      return tmp
+      return out
     
     def runMmls(self, ch):
       
