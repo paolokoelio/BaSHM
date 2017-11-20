@@ -57,7 +57,7 @@ size = f.info.meta.size
 # print(size)
 BUFF_SIZE = 1024 * 1024
 
-path_mft = '../files_tmp/mft.raw'
+path_mft = '../cases/mft.raw'
 f2 = open(path_mft, 'wb')
 
 while offset < size:

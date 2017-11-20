@@ -4,11 +4,9 @@ Created on 10 nov 2017
 @author: koelio
 '''
 
-from utils.ConcereteWriter import ConcreteWriter
 from Fls import Fls
 import sys, traceback
 import ConfigParser  # import not compatible with python3, should be configparser
-from partitions.Partitions import Partitions
 
 CONFIG_PATH = '..\config\config.cfg'
 
@@ -17,11 +15,13 @@ class Extractor(object):
     classdocs
     '''
     __fls = None
+    __l2t = None
     __devlist = None
     __config = None
     __partitions = None
     __mmls = None
-    __part_list = None
+    __part_list = None # partition list of the selected device in Partition during menu choice
+    __sel_dev = None # device selected in Partition class during menu choice
     __offset = None
 
     def __init__(self, partitions):
@@ -45,6 +45,7 @@ class Extractor(object):
       # Exploiting the menu listing feature from Partitions()
       self.__partitions.init_menu()
       self.__part_list = self.__partitions.get_part_list()
+      self.__sel_dev = self.__partitions.get_sel_dev()
       
       ch = raw_input(" >>  ")
       self.exec_menu(ch)
@@ -56,13 +57,21 @@ class Extractor(object):
       print("Launching TSK fls module..\n")
       self.init_menu()
       
-      #TODO put all arguments     
+      #TODO put all arguments (left for standalone version of FLs())   
       self.__fls.set_offset(self.__offset)
       
+      #set pathname for extracting the timeline
+      directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
+      self.__fls.set_filename(self.__config.get('paths','cases') + '\\' + directory + '\\' + 'body.txt')
+      
+      #set the physical device
       self.__fls.set_images([self.__partitions.get_sel_dev()['DeviceID']])
-      # we leave the rest default, and launch fls
-      self.__fls.extractTimel()
-    
+      
+      # we leave the rest default, and launch fls (TODO: set timer)
+      if self.__fls.extractTimel()==0:
+        print("Success!") 
+      else:
+        print("Uh-oh")
     
     def stimel(self):
       '''
@@ -70,6 +79,14 @@ class Extractor(object):
       '''
       print("Launching log2timeline module..\n")
       self.init_menu()
+      
+      self.__l2t.setOffset(self.__offset)
+      
+      directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
+      self.__fls.set_filename(self.__config.get('paths','cases') + '\\' + directory + '\\' + 'super_timelcsv')
+      
+      
+      #self.__l2t.setogffset(self.__offset)
       #self.__l2t.run()
       
       return
@@ -102,5 +119,3 @@ class Extractor(object):
               pass
       return 
 
-
-    

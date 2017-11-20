@@ -7,6 +7,8 @@ Created on 27 ott 2017
 from __future__ import print_function
 from pySMART import DeviceList  # smartmontools wrapper
 from utils.ConcereteWriter import ConcreteWriter
+from utils.DirectoryWriter import DirectoryWriter
+from partitions.Partitions import Partitions
 
 
 class DiskInfo(object):
@@ -17,6 +19,7 @@ class DiskInfo(object):
     __devlist = None
     __device = None
     __writer = None
+    __dir_writer = None
     __menu_devs = {}
     __f_name = 'disk_data.txt'
 
@@ -24,25 +27,15 @@ class DiskInfo(object):
         '''
         Constructor
         '''
+        self.__partitions = Partitions()
+        self.__windev = self.__partitions.get_devlist()
         self.__writer = ConcreteWriter()
+        self.__dir_writer = DirectoryWriter()
         
     def init_menu(self):
       
-      print('Choose the device to test:\n')
-      self.__devlist = DeviceList()
-      
-      i = 1
-      for device in self.__devlist.devices:
-        
-#         self.__menu_devs[i] = "mod:%s sn:%s, %s device on /dev/%s" % (
-#             device.model, device.serial, device.interface.upper(), device.name)
-
-        print("%d. %s serial:%s, %s device on /dev/%s" % (
-            i, device.model, device.serial, device.interface.upper(), device.name))
-        
-        i = i + 1
-      # print (self.__menu_devs)
-      
+      self.printMenu()
+            
       ch = raw_input(" >>  ")
       self.exec_menu(ch)
     
@@ -50,53 +43,89 @@ class DiskInfo(object):
       self.init_menu()
         
     # TODO exception handling   
+    
     def chkhealth(self, device):
-      
+
+      #create directory if it doesn't exist
+      directory = str('case_' + str(device.model)).replace(' ', '_')
+      self.__dir_writer.createDir(directory)
+      self.__f_name = str(directory + '\\' + self.__f_name)
+      print(self.__f_name)
+  
+      #write to directory 
       self.__writer.open(self.__f_name)
       print("\n")
       
       out = 'Devie Data:' + '\n' + 'name: ' + str(device.name) + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: '  # TODO hash
       print(out)
       self.__writer.write(out)
-      # optionally? print all attributes
-      # device.all_attributes() 
-      out = "\nSMART check for /dev/" + str(device.name) + " " + str(device.model) + ":\n"
+
+      out = "\nSMART check for \\\\.\PhysicalDrive\\" + str(device.name) + " " + str(device.model) + ":\n"
       print(out)
+      
       self.__writer.write(out)
       
       out = str(device.assessment) + "\n"
       print(out)
       
-      self.__writer.write(out)
+      self.__writer.write(out + "\n")
+      
+      # after test print all attributes
+        
+      header_printed = False
+      for attr in device.attributes:
+          if attr is not None:
+              if not header_printed:
+                  self.__writer.write("{0:>3} {1:24}{2:4}{3:4}{4:4}{5:9}{6:8}{7:12}"
+                        "{8}\n".format(
+                            'ID#', 'ATTRIBUTE_NAME', 'CUR', 'WST', 'THR',
+                            'TYPE', 'UPDATED', 'WHEN_FAIL', 'RAW'))
+                  header_printed = True
+              self.__writer.write(str(attr)+"\n")
+      if not header_printed:
+          print("This device does not support SMART attributes.")
+        
+        
+        
+         
+      
       self.__writer.close()
+      #flush filename
+      self.__f_name = 'disk_data.txt'
 
     def createCaseFolder(self):
-      
-      # print (self.__menu_devs)
-      print('Choose the device(s) of the case\n')
-      self.__devlist = DeviceList()
-      
-      i = 1
-      for device in self.__devlist.devices:
-        print("%d. %s serial:%s, %s device on /dev/%s" % (
-            i, device.model, device.serial, device.interface.upper(), device.name))
-        i = i + 1
-      
+      self.printMenu()
+      print('\n')
       
       ch = raw_input(" >> ")
       if int(ch) == 0: 
         return
       else:
-        out  =self.__devlist.devices[int(ch) - 1].model
+        out = self.__devlist.devices[int(ch) - 1].model
         ch = raw_input(" >> {}{}{}".format('cases\\', 'case_', str(out))) or ('case_' + str(out))
 
-      
+      print('\n')
       directory = str(ch).replace(' ', '_')
-      self.__writer.createDir(directory)
-
+      self.__dir_writer.createDir(directory)
+      #self.__writer.createDir(directory)
   
     def openDD(self):
       pass
+
+    def printMenu(self):
+      
+      print(self.__windev)
+      
+      print('Loading devices...')
+      self.__devlist = DeviceList()
+      print('Choose the device:\n')
+      i = 1
+      for device in self.__devlist.devices:
+        print("%d. %s serial:%s, %s device on /dev/%s YO %s" % (
+            i, device.model, device.serial, device.interface.upper(), device.name, self.__windev[i-1]['DeviceID']))
+        i = i + 1
+      print('\n')
+      
       
     def exec_menu(self, ch):
         if ch == '':

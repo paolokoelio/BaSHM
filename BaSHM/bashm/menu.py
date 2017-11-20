@@ -9,6 +9,7 @@ from chkmnt.Chkmnt import Chkmnt
 from diskinfo.DiskInfo import DiskInfo
 from partitions.Partitions import Partitions
 from extractor.Extractor import Extractor
+from extractor.TSKExtractor import TSKExtractor
 
 class Menu(object):
   '''
@@ -18,6 +19,7 @@ class Menu(object):
   __checkMount = None
   __checkHealth = None
   __extractor = None
+  __TSKextractor = None
   __partitions = None
   
   # Main definition
@@ -53,10 +55,11 @@ class Menu(object):
     
     ]
   
-  extractorLabels = ["Choose the artifacts to extract:",
-                              "1. Timeline (TSK fls)",
+  extractorLabels = ["Choose the artifacts to TSKtimel:",
+                              "1. Timeline (TSK 3 custom)",
                               "2. Super-timeline (log2timeline)",
-                              "3. Browse only (TODO)",
+                              "3. Timeline (TSK 4.5, similar to 1. but with 4.5 binaries)",
+                              "4. Browse only (future work)",
                               "9. Back",
                               "0. Quit"
                               ]
@@ -71,6 +74,7 @@ class Menu(object):
     self.__checkHealth = DiskInfo()
     self.__partitions = Partitions()
     self.__extractor = Extractor(self.__partitions)
+    self.__TSKextractor = TSKExtractor(self.__partitions)
 
     
     self.__chkmnt_menu = {
@@ -92,7 +96,8 @@ class Menu(object):
     self.__extractor_menu = {
         '1':self.__extractor.timel,
         '2':self.__extractor.stimel,
-        '3':self.__extractor.browse,
+        '3':self.__TSKextractor.TSKtimel,
+        '4':self.__extractor.browse,
         '9':self.back,
         '0':self.exit,
     }
@@ -110,11 +115,11 @@ class Menu(object):
         '1': self.chkmnt,
         '2': self.health,
         '3': self.partitions,
-        '4': self.extract,
+        '4': self.TSKtimel,
         'chkmnt': self.__chkmnt_menu,
         'diskinfo': self.__chkHealth_menu,
         'partitions': self.__partitions_menu,
-        'extract': self.__extractor_menu,
+        'TSKtimel': self.__extractor_menu,
         '9': self.back,
         '0': self.exit,
     }
@@ -194,11 +199,11 @@ class Menu(object):
       return
     
   # Menu for extracting timelines
-  def extract(self):
+  def TSKtimel(self):
       for m in self.extractorLabels:
         print(m)
       choice = raw_input(" >>  ")
-      choice = ['extract' , choice.lower()]
+      choice = ['TSKtimel' , choice.lower()]
       self.exec_menu(choice)
       return
    

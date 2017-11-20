@@ -4,8 +4,7 @@ Created on 07 nov 2017
 @author: koelio
 '''
 import ConfigParser
-import os, errno
-
+import sys
 
 CONFIG_PATH = '..\config\config.cfg'
 
@@ -24,28 +23,30 @@ class ConcreteWriter(object):
       config.read(CONFIG_PATH)
       self.__config = config
       
-    #TODO esceptions handling  
-    def open(self, path): 
-      self.__f = open(self.__config.get('paths', 'cases') + path, "w")
+    def open(self, path):  
+      try:
+        self.__f = open(self.__config.get('paths', 'cases') + path, "w")
+      except IOError:
+        print( "Could not read file: ", path)
+        sys.exit()
         
     def write(self, data):
-      self.__f.write(data)
+      try:
+        self.__f.write(data)
+      except IOError:
+        print("Could write: ", data)
+        sys.exit()
       
     def close(self):
-      self.__f.close()
-      
-    def createDir(self, directory):
       try:
-        os.makedirs(self.__config.get('paths','cases') + '\\' + directory)
-      except OSError as e:
-        if e.errno != errno.EEXIST:
-          raise
+        self.__f.close()
+      except IOError:
+        print("Could not close the file: ")
+        sys.exit()
       
-      # test
-      #print(self.__config.get('paths','cases') + directory + 'successfully created')
-   
-#       # alternative solution
-#       if not os.path.exists(directory):
-#         os.makedirs(directory)
-#       else: 
-#         pass
+#     def createDir(self, directory):
+#       try:
+#         os.makedirs(self.__config.get('paths','cases') + '\\' + directory)
+#       except OSError as e:
+#         if e.errno != errno.EEXIST:
+#           raise

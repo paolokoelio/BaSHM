@@ -41,8 +41,6 @@ class Partitions(object):
       print('Choose a device:\n')
       self.__devlist = self.getDevices()
       
-      # clean before issuing a new one
-      
       i = 1
       for device in self.__devlist:
         print("%d . %s DevID: %s #partitions: %s" % (
@@ -55,10 +53,6 @@ class Partitions(object):
     
     def getDevices(self):
       
-#       # TODO put in config.cfg
-#       cmd = ['powershell.exe',
-#             'Get-WmiObject Win32_DiskDrive', '| format-list']
-
       cmd = ''.join([self.__config.get('commands', 'physicaldevice')])
       
       out = self.run_cmd(cmd)
@@ -126,6 +120,8 @@ class Partitions(object):
       return out
     
     def get_devlist(self):
+      
+      self.__devlist  = self.getDevices()
       return self.__devlist    
 
     def get_sel_dev(self):

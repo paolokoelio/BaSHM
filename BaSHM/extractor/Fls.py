@@ -62,7 +62,7 @@ class Fls(object):
     super(Fls, self).__init__()
     self._fs_info = None
     self._img_info = None
-    self._long_listing = False
+    self._long_listing = True
     self._recursive = False
     self._print = False
     self._fout = None
@@ -72,36 +72,36 @@ class Fls(object):
     self.__images = None
     self.__offset = 0
     self.__inode = '/'
-    self.__print = False
-    self.__recursive = False
+    #self.__print = False
+    #self.__recursive = True
     self.__filename = None
 
-  def filemode(self, m):
-      '''
-      Mode m to be converted
-      '''
-      oExec = bool(m & 0001)
-      oWrite = bool(m & 0002)
-      oRead = bool(m & 0004)
-      gExec = bool(m & 0010)
-      gWrite = bool(m & 0020)
-      gRead = bool(m & 0040)
-      otExec = bool(m & 0100)
-      otWrite = bool(m & 0200)
-      otRead = bool(m & 0400)
-      
-      modes = {oExec:'e',
-               oWrite:'w',
-               oRead:'r',
-               gExec:'e',
-               gWrite:'w',
-               gRead:'r',
-               otExec: 'e',
-               otWrite: 'w',
-               otRead: 'r',
-               }
-      
-      return str()
+#   def filemode(self, m):
+#       '''
+#       Mode m to be converted
+#       '''
+#       oExec = bool(m & 0001)
+#       oWrite = bool(m & 0002)
+#       oRead = bool(m & 0004)
+#       gExec = bool(m & 0010)
+#       gWrite = bool(m & 0020)
+#       gRead = bool(m & 0040)
+#       otExec = bool(m & 0100)
+#       otWrite = bool(m & 0200)
+#       otRead = bool(m & 0400)
+#       
+#       modes = {oExec:'e',
+#                oWrite:'w',
+#                oRead:'r',
+#                gExec:'e',
+#                gWrite:'w',
+#                gRead:'r',
+#                otExec: 'e',
+#                otWrite: 'w',
+#                otRead: 'r',
+#                }
+#       
+#       return str()
 
   def list_directory(self, directory, stack=None):
     stack.append(directory.info.fs_file.meta.addr)
@@ -162,9 +162,16 @@ class Fls(object):
 
   def open_fout(self, filename):
     # Outputs to a UTF-8 .txt file
-    if not self._print:
-      self._fout = open(filename, 'wb')
-  
+    
+    try:
+      if not self._print:
+        self._fout = open(filename, 'wb')
+    
+    except IOError as io:
+      #traceback.print_exc()
+      print("Consider creating a case directory first in menu 2.\n{} \n".format(io))    
+      return 2
+        
   def close_fout(self):
     if not self._print:
       self._fout.close()
@@ -204,7 +211,9 @@ class Fls(object):
           else:
             filename = name.name.decode("utf-8")
 
-          times = [meta.crtime, meta.ctime, meta.mtime, meta.atime]
+#           times = [meta.crtime, meta.ctime, meta.mtime, meta.atime] #probably wron disposition
+          times = [meta.atime, meta.mtime, meta.ctime, meta.crtime]
+
 
 #           choppiamo il primo char perche' viene '?'
 #           no filemode attribute for python2.7, thus custom method         
@@ -225,11 +234,9 @@ class Fls(object):
             else:
               self._fout.write("{}\n".format(out).encode("utf-8"))
             
-            # pass
-
   def extractTimel(self):
     
-    print("Extracting timeline...\n")
+    print("Extracting timeline to: {}\n".format(self.__filename))
     print("Issuing TSK command: fls -f ntfs -i {} -o {} {} {}\n".format(self.__image_type, self.__offset, ''.join(self.__images), self.__inode))
     
     # VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
@@ -242,32 +249,41 @@ class Fls(object):
                'images':self.__images,
                'offset':self.__offset,
                'inode':self.__inode,
-               'print':self.__print,
-               'recursive':self.__recursive,
+               'print':self._print,
+               'recursive':self._recursive,
+               'filename':self.__filename,
                }
     
     self.open_image(options['image_type'], options['images'])
   
     try:
-      filename = '../files_tmp/body.txt'
+      try:
+        #filename = '../files_tmp/body.txt'
+        
+        self.open_fout(self.__filename)
       
-      self.open_fout(filename)
-    
-      self.open_file_system(options['offset'])
-
-      directory = self.open_directory(options['inode'])
-    
-      # Iterate over all files in the directory and print their name.
-      # What you get in each iteration is a proxy object for the TSK_FS_FILE
-      # struct - you can further dereference this struct into a TSK_FS_NAME
-      # and TSK_FS_META structs.
-      self.list_directory(directory, [])
-    
-      self.close_fout()
+        self.open_file_system(options['offset'])
   
+        directory = self.open_directory(options['inode'])
+      
+        # Iterate over all files in the directory and print their name.
+        # What you get in each iteration is a proxy object for the TSK_FS_FILE
+        # struct - you can further dereference this struct into a TSK_FS_NAME
+        # and TSK_FS_META structs.
+        self.list_directory(directory, [])
+      
+        self.close_fout()
+      
+      except IOError as io:
+        #traceback.print_exc()
+        print("Consider creating a case directory first in menu 2.\n{} \n".format(io))    
+        return 2
+    
     except Exception as e:
-        traceback.print_exc()
-    return
+      print("Generic error occurred: \n{}".format(e))
+      return 2
+    
+    return 0
 
   def get_recursive(self):
     return self.__recursive
@@ -310,3 +326,91 @@ class Fls(object):
   
   def set_filename(self, value):
     self.__filename = value
+
+
+#Taken from examples, can launch fls as a commandline tool
+def Main():
+  """The main program function.
+
+  Returns:
+    A boolean containing True if successful or False if not.
+  """
+  args_parser = argparse.ArgumentParser(description=(
+      "Lists a file system in a storage media image or device."))
+
+  args_parser.add_argument(
+      "images", nargs="+", metavar="IMAGE", action="store", type=str,
+      default=None, help=("Storage media images or devices."))
+
+  args_parser.add_argument(
+      "inode", nargs="?", metavar="INODE", action="store",
+      type=str, default=None, help=(
+          "The inode or path to list. If [inode] is not given, the root "
+          "directory is used"))
+
+  # TODO: not implemented.
+  # args_parser.add_argument(
+  #     "-f", "--fstype", metavar="TYPE", dest="file_system_type",
+  #     action="store", type=str, default=None, help=(
+  #         "The file system type (use \"-f list\" for supported types)"))
+
+  args_parser.add_argument(
+      "-i", "--imgtype", metavar="TYPE", dest="image_type", type=str,
+      choices=["ewf", "qcow", "raw"], default="raw", help=(
+          "Set the storage media image type."))
+
+  # TODO: not implemented.
+  # args_parser.add_argument(
+  #     "-l", dest="long_listing", action="store_true", default=False,
+  #     help="Display long version (like ls -l)")
+
+  args_parser.add_argument(
+      "-o", "--offset", metavar="OFFSET", dest="offset", action="store",
+      type=int, default=0, help="The offset into image file (in bytes)")
+
+  args_parser.add_argument(
+      "-r", "--recursive", dest="recursive", action="store_true",
+      default=False, help="List subdirectories recursively.")
+  
+  args_parser.add_argument(
+      "-p", "--print", dest="print", action="store_true",
+      default=False, help="Print output to stdout.")
+
+  args_parser.add_argument(
+    "--file", nargs="+", metavar="FILENAME", dest="filename", action="store", type=str,
+    default='body.txt', help=("Where to write output."))
+
+  options = args_parser.parse_args()
+
+  if not options.images:
+    print('No storage media image or device was provided.')
+    print('')
+    args_parser.print_help()
+    print('')
+    return False
+
+  print(options)  
+  #return True
+  
+  fls = Fls()
+  fls.parse_options(options)
+  
+  fls.open_image(options.image_type, options.images)
+
+  fls.open_fout(options.filename[0])
+
+  fls.open_file_system(options.offset)
+
+  directory = fls.open_directory(options.inode)
+
+  fls.list_directory(directory, [])
+
+  fls.close_fout()
+
+  return True
+
+if __name__ == '__main__':
+  if not Main():
+    sys.exit(1)
+  else:
+    sys.exit(0)
