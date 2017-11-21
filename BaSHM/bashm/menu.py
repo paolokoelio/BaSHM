@@ -69,10 +69,9 @@ class Menu(object):
     '''
     Menu entries definitions and initialize Classes
     '''
-    
-    self.__checkMount = Chkmnt()
-    self.__checkHealth = DiskInfo()
     self.__partitions = Partitions()
+    self.__checkMount = Chkmnt()
+    self.__checkHealth = DiskInfo(self.__partitions)
     self.__extractor = Extractor(self.__partitions)
     self.__TSKextractor = TSKExtractor(self.__partitions)
 

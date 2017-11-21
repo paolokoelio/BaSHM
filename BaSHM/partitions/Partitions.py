@@ -95,7 +95,7 @@ class Partitions(object):
             return
         else:
             try:
-                # mmls tool against the specified device
+                # select a device and get it's list partition by running mmls
                 self._selDev = self.__devlist[int(ch) - 1]
                 self.__part_list = self.runMmls(ch)
             except KeyError:

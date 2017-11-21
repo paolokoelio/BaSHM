@@ -5,10 +5,10 @@ Created on 27 ott 2017
 '''
 
 from __future__ import print_function
+import traceback
 from pySMART import DeviceList  # smartmontools wrapper
 from utils.ConcereteWriter import ConcreteWriter
 from utils.DirectoryWriter import DirectoryWriter
-from partitions.Partitions import Partitions
 
 
 class DiskInfo(object):
@@ -23,12 +23,12 @@ class DiskInfo(object):
     __menu_devs = {}
     __f_name = 'disk_data.txt'
 
-    def __init__(self):
+    def __init__(self, partitions):
         '''
         Constructor
         '''
-        self.__partitions = Partitions()
-        self.__windev = self.__partitions.get_devlist()
+        self.__partitions = partitions
+
         self.__writer = ConcreteWriter()
         self.__dir_writer = DirectoryWriter()
         
@@ -50,17 +50,17 @@ class DiskInfo(object):
       directory = str('case_' + str(device.model)).replace(' ', '_')
       self.__dir_writer.createDir(directory)
       self.__f_name = str(directory + '\\' + self.__f_name)
-      print(self.__f_name)
+      #print(self.__f_name)
   
       #write to directory 
       self.__writer.open(self.__f_name)
       print("\n")
-      
-      out = 'Devie Data:' + '\n' + 'name: ' + str(device.name) + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: '  # TODO hash
+
+      out = 'Device Data:' + '\n' + 'name: ' + str(device.name) + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: '  # TODO hash
       print(out)
       self.__writer.write(out)
 
-      out = "\nSMART check for \\\\.\PhysicalDrive\\" + str(device.name) + " " + str(device.model) + ":\n"
+      out = "\nSMART check for " + str(device.name) + " " + str(device.model) + ":\n"
       print(out)
       
       self.__writer.write(out)
@@ -85,10 +85,6 @@ class DiskInfo(object):
       if not header_printed:
           print("This device does not support SMART attributes.")
         
-        
-        
-         
-      
       self.__writer.close()
       #flush filename
       self.__f_name = 'disk_data.txt'
@@ -114,18 +110,26 @@ class DiskInfo(object):
 
     def printMenu(self):
       
-      print(self.__windev)
+      # needed for consistency between names, i.e. /dev/sda and \\.\.physicaldrive0
+      self.__windev = self.__partitions.get_devlist()
+      #print(self.__windev)
       
       print('Loading devices...')
       self.__devlist = DeviceList()
       print('Choose the device:\n')
       i = 1
-      for device in self.__devlist.devices:
-        print("%d. %s serial:%s, %s device on /dev/%s YO %s" % (
-            i, device.model, device.serial, device.interface.upper(), device.name, self.__windev[i-1]['DeviceID']))
-        i = i + 1
+      new_devices = []
+      for windev in self.__windev:
+        for device in self.__devlist.devices:
+          if str(windev['Model']) in str(device.model):
+            device.name = windev['DeviceID']
+            #reordering the list for consistency
+            new_devices.append(device)
+            print("%d. %s serial:%s, %s device on %s" % (
+                i, device.model, device.serial, device.interface.upper(), device.name))
+            i = i + 1
       print('\n')
-      
+      self.__devlist.devices = new_devices
       
     def exec_menu(self, ch):
         if ch == '':
@@ -137,7 +141,8 @@ class DiskInfo(object):
                 # select the device to test, -1 because in menu prints at 1
                 self.__device = self.__devlist.devices[int(ch) - 1]
                 self.chkhealth(self.__device)
-            except KeyError:
-                print("Invalid selection, please try again.\n")
-                pass
+            except IndexError, Exception:
+                print("Invalid selection, please try again. YO\n")
+                traceback.print_exc() 
+                
         return

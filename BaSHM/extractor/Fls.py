@@ -237,7 +237,7 @@ class Fls(object):
   def extractTimel(self):
     
     print("Extracting timeline to: {}\n".format(self.__filename))
-    print("Issuing TSK command: fls -f ntfs -i {} -o {} {} {}\n".format(self.__image_type, self.__offset, ''.join(self.__images), self.__inode))
+    print("PErforming equivalent TSK command to: fls -f ntfs -i {} -o {} {} {}\n".format(self.__image_type, self.__offset, ''.join(self.__images), self.__inode))
     
     # VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
     # self._images = ['\\\.\PHYSICALDRIVE1']

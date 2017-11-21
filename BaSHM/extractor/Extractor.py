@@ -54,7 +54,7 @@ class Extractor(object):
       '''
       Perform timeline extraction
       '''
-      print("Launching TSK fls module..\n")
+      print("Launching fls module..\n")
       self.init_menu()
       
       #TODO put all arguments (left for standalone version of FLs())   
@@ -69,7 +69,7 @@ class Extractor(object):
       
       # we leave the rest default, and launch fls (TODO: set timer)
       if self.__fls.extractTimel()==0:
-        print("Success!") 
+        print("Success!")
       else:
         print("Uh-oh")
     
@@ -83,7 +83,7 @@ class Extractor(object):
       self.__l2t.setOffset(self.__offset)
       
       directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
-      self.__fls.set_filename(self.__config.get('paths','cases') + '\\' + directory + '\\' + 'super_timelcsv')
+      self.__fls.set_filename(self.__config.get('paths','cases') + '\\' + directory + '\\' + 'super_timel.csv')
       
       
       #self.__l2t.setogffset(self.__offset)
