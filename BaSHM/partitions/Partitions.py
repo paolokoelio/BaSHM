@@ -5,12 +5,8 @@ Created on 13 nov 2017
 '''
 
 import subprocess as sp
-import re, sys, traceback
+import re
 from partitions.Mmls import Mmls
-import ConfigParser  # import not compatible with python3, should be configparser
-
-CONFIG_PATH = '..\config\config.cfg'
-
 
 class Partitions(object):
     '''
@@ -23,30 +19,17 @@ class Partitions(object):
     __selOffset = 0
     __part_list = None
 
-    def __init__(self):
+    def __init__(self, config):
       '''
       Constructor
-      '''
-      
-      try:
-        config = ConfigParser.ConfigParser()
-        config.read(CONFIG_PATH)      
-        self.__config = config
-      except Exception as e:
-        sys.stderr.write(repr(e) + " in config file.\n")
-        traceback.print_exc()  
+      '''     
+      self.__config = config
         
     def init_menu(self):
       
       print('Choose a device:\n')
-      self.__devlist = self.getDevices()
-      
-      i = 1
-      for device in self.__devlist:
-        print("%d . %s DevID: %s #partitions: %s" % (
-            i, device['Model'], device['DeviceID'], device['Partitions']))
-        i = i + 1
-      # print (self.__menu_devs)
+
+      self.print_menu()
       
       ch = raw_input(" >>  ")
       self.exec_menu(ch)
@@ -58,6 +41,17 @@ class Partitions(object):
       out = self.run_cmd(cmd)
 
       return self.parse_out(out)
+ 
+    def print_menu(self):
+      
+      self.__devlist = self.getDevices()
+      
+      i = 1
+      for device in self.__devlist:
+        print("%d . %s DevID: %s #partitions: %s" % (
+            i, device['Model'], device['DeviceID'], device['Partitions']))
+        i = i + 1
+      # print (self.__menu_devs)
       
     def parse_out(self, out):
       

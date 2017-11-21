@@ -5,11 +5,6 @@ Created on 24 ott 2017
 '''
 
 import subprocess as sp
-import ConfigParser  # import not compatible with python3, should be configparser
-import sys, traceback
-# from bashm.menu import Menu
-
-CONFIG_PATH = '..\config\config.cfg'
 
 
 class Chkmnt(object):
@@ -19,17 +14,11 @@ class Chkmnt(object):
 
     __config = None
 
-    def __init__(self):
+    def __init__(self, config):
       '''
       Constructor
       '''
-      try:
-        config = ConfigParser.ConfigParser()
-        config.read(CONFIG_PATH)      
-        self.__config = config
-      except Exception as e:
-        sys.stderr.write(repr(e) + " in config file.\n")
-        traceback.print_exc()
+      self.__config = config
            
     def check(self):
       cmd = ''.join([self.__config.get('commands', 'diskpart'),
@@ -38,7 +27,6 @@ class Chkmnt(object):
             self.__config.get('names', 'chkmnt')])
 
       self.run_cmd(cmd)
-
       
     def deactmnt(self): 
       cmd = self.__config.get('commands', 'deactmnt')
@@ -47,13 +35,12 @@ class Chkmnt(object):
       if out == 0:
         print('AUTOMOUNT disabled successfully.\nYou you can now connect the Disk safely.\n')
 
-
     def actmnt(self):
       cmd = self.__config.get('commands', 'actmnt')
       if self.run_cmd(cmd) == 0:
         print('AUTOMUNT enabled successfully.\n')
       
-    def run_cmd(self,cmd):
+    def run_cmd(self, cmd):
       '''
         Prints and runs specified command
       '''

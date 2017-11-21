@@ -4,29 +4,36 @@ Created on 23 ott 2017
 @author: koelio
 '''
 import subprocess as sp  # for screen cleaning (cls)
-import sys
+import sys, traceback
+import ConfigParser  # import not compatible with python3, should be configparser
 from chkmnt.Chkmnt import Chkmnt
 from diskinfo.DiskInfo import DiskInfo
 from partitions.Partitions import Partitions
 from extractor.Extractor import Extractor
 from extractor.TSKExtractor import TSKExtractor
+from extractor.L2t import L2t
+
+CONFIG_PATH = '..\config\config.cfg'
+
 
 class Menu(object):
   '''
   Main menu for choosing actions.
   '''
   # some declarations
+  __config = None
   __checkMount = None
   __checkHealth = None
   __extractor = None
   __TSKextractor = None
   __partitions = None
+  __Lt2 = None
   
   # Main definition
   __menu_actions = {}
   
-  mainMenuLabels = ["Please choose the action you want to launch:", 
-                           "1. Check and Deactivate AUTOMOUNT", 
+  mainMenuLabels = ["Please choose the action you want to launch:",
+                           "1. Check and Deactivate AUTOMOUNT",
                            "2. Device information and SMART data",
                            "3. Get logical structure of a device",
                            "4. Extract Time-lines",
@@ -39,7 +46,7 @@ class Menu(object):
                               "9. Back",
                               "0. Quit"
                               ]
-  checkHealthLabels = ["Perform SMART Health Test:", #TODO add disk info entry
+  checkHealthLabels = ["Perform SMART Health Test:",  # TODO add disk info entry
                               "1. Create case folder",
                               "2. SMART Health test with smartctl (smartmontools)",
                               "3. Open dd shell (future work)",
@@ -69,12 +76,15 @@ class Menu(object):
     '''
     Menu entries definitions and initialize Classes
     '''
-    self.__partitions = Partitions()
-    self.__checkMount = Chkmnt()
+    
+    self.__config = self.init_config()
+    
+    self.__partitions = Partitions(self.__config)
+    self.__checkMount = Chkmnt(self.__config)
     self.__checkHealth = DiskInfo(self.__partitions)
-    self.__extractor = Extractor(self.__partitions)
-    self.__TSKextractor = TSKExtractor(self.__partitions)
-
+    self.__extractor = Extractor(self.__config, self.__partitions)
+    self.__TSKextractor = TSKExtractor(self.__config, self.__partitions)
+    self.__L2t = L2t(self.__config, self.__partitions)
     
     self.__chkmnt_menu = {
         '1':self.__checkMount.check,
@@ -87,14 +97,14 @@ class Menu(object):
     self.__chkHealth_menu = {
         '1':self.__checkHealth.createCaseFolder,
         '2':self.__checkHealth.initialize,
-        '3':self.__checkHealth.openDD, #TODO
+        '3':self.__checkHealth.openDD,  # TODO
         '9':self.back,
         '0':self.exit,
     }
     
     self.__extractor_menu = {
         '1':self.__extractor.timel,
-        '2':self.__extractor.stimel,
+        '2':self.__L2t.stimel,
         '3':self.__TSKextractor.TSKtimel,
         '4':self.__extractor.browse,
         '9':self.back,
@@ -147,7 +157,6 @@ class Menu(object):
           try:
               # execute selected action  
               self.get_in_dic(ch)
-              # self.__menu_actions[ch]()
           except KeyError:
               print("Invalid selection, please try again.\n")
               self.__menu_actions['main_menu']()
@@ -157,19 +166,19 @@ class Menu(object):
   def get_in_dic(self, ch):
     mn = self.__menu_actions
     if ch[0] in mn:
-      #if this is a second level menu
+      # if this is a second level menu
       if len(ch) > 1:
         if ch[1] in mn[ch[0]]:
-          #then go to second level choice
+          # then go to second level choice
           mn[ch[0]][ch[1]]()
       else:
         # go to first level choice
         mn[ch[0]]()
-    #get back to main menu by default
+    # get back to main menu by default
     mn['main_menu']()
     return
    
-  # Menu for check AUTOMOUNT (TODO refactoring method duplication
+  # Menu for check AUTOMOUNT (TODO refactoring method duplication, see below)
   def chkmnt(self):
       for m in self.checkMountLabels:
         print(m)
@@ -197,7 +206,7 @@ class Menu(object):
       self.exec_menu(choice)
       return
     
-  # Menu for extracting timelines
+  # Menu for extracting timelines (END TODO refactoring)
   def TSKtimel(self):
       for m in self.extractorLabels:
         print(m)
@@ -214,6 +223,16 @@ class Menu(object):
   def exit(self):
       sys.exit(0)
       return
+ 
+  def init_config(self):
+    try:
+      config = ConfigParser.ConfigParser()
+      config.read(CONFIG_PATH)      
+      return config
+    except Exception as e:
+      sys.stderr.write(repr(e) + " in config file.\n")
+      traceback.print_exc()
+
     
 def cls():
     # tmp = os.system('cls' if os.name=='nt' else 'clear')

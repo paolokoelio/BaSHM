@@ -5,10 +5,7 @@ Created on 10 nov 2017
 '''
 
 from Fls import Fls
-import sys, traceback
-import ConfigParser  # import not compatible with python3, should be configparser
 
-CONFIG_PATH = '..\config\config.cfg'
 
 class Extractor(object):
     '''
@@ -20,24 +17,16 @@ class Extractor(object):
     __config = None
     __partitions = None
     __mmls = None
-    __part_list = None # partition list of the selected device in Partition during menu choice
-    __sel_dev = None # device selected in Partition class during menu choice
+    __part_list = None  # partition list of the selected device in Partition during menu choice
+    __sel_dev = None  # device selected in Partition class during menu choice
     __offset = None
 
-    def __init__(self, partitions):
+    def __init__(self, config, partitions):
       '''
       Constructor
       '''
       self.__partitions = partitions
-        
-      try:
-        config = ConfigParser.ConfigParser()
-        config.read(CONFIG_PATH)      
-        self.__config = config
-      except Exception as e:
-        sys.stderr.write(repr(e) + " in config file.\n")
-        traceback.print_exc()
-      
+      self.__config = config
       self.__fls = Fls()
       
     def init_menu(self):
@@ -56,24 +45,23 @@ class Extractor(object):
       '''
       print("Launching fls module..\n")
       self.init_menu()
-      
-      #TODO put all arguments (left for standalone version of FLs())   
+         
       self.__fls.set_offset(self.__offset)
       
-      #set pathname for extracting the timeline
+      # set pathname for extracting the timeline
       directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
-      self.__fls.set_filename(self.__config.get('paths','cases') + '\\' + directory + '\\' + 'body.txt')
+      self.__fls.set_filename(self.__config.get('paths', 'cases') + '\\' + directory + '\\' + 'body.txt')
       
-      #set the physical device
+      # set the physical device
       self.__fls.set_images([self.__partitions.get_sel_dev()['DeviceID']])
       
       # we leave the rest default, and launch fls (TODO: set timer)
-      if self.__fls.extractTimel()==0:
+      if self.__fls.extractTimel() == 0:
         print("Success!")
       else:
         print("Uh-oh")
     
-    def stimel(self):
+    def stimel(self): #TODO delete this
       '''
       Perform super-timeline extraction
       '''
@@ -83,11 +71,10 @@ class Extractor(object):
       self.__l2t.setOffset(self.__offset)
       
       directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
-      self.__fls.set_filename(self.__config.get('paths','cases') + '\\' + directory + '\\' + 'super_timel.csv')
+      self.__fls.set_filename(self.__config.get('paths', 'cases') + '\\' + directory + '\\' + 'super_timel.csv')
       
-      
-      #self.__l2t.setogffset(self.__offset)
-      #self.__l2t.run()
+      # self.__l2t.setogffset(self.__offset)
+      # self.__l2t.run()
       
       return
     
@@ -102,7 +89,7 @@ class Extractor(object):
       
       # where offset in block is
       off_index = 3
-      #print('{}'.format(self.__part_list[int(ch)]))
+      # print('{}'.format(self.__part_list[int(ch)]))
       self.__offset = int(self.__part_list[int(ch)][off_index])
     
     def exec_menu(self, ch):
