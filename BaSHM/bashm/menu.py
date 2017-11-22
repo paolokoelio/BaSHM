@@ -5,15 +5,12 @@ Created on 23 ott 2017
 '''
 import subprocess as sp  # for screen cleaning (cls)
 import sys, traceback
-import ConfigParser  # import not compatible with python3, should be configparser
 from chkmnt.Chkmnt import Chkmnt
 from diskinfo.DiskInfo import DiskInfo
 from partitions.Partitions import Partitions
 from extractor.Extractor import Extractor
 from extractor.TSKExtractor import TSKExtractor
 from extractor.L2t import L2t
-
-CONFIG_PATH = '..\config\config.cfg'
 
 
 class Menu(object):
@@ -71,13 +68,13 @@ class Menu(object):
                               "0. Quit"
                               ]
 
-  def __init__(self):
+  def __init__(self, config):
     
     '''
     Menu entries definitions and initialize Classes
     '''
     
-    self.__config = self.init_config()
+    self.__config = config
     
     self.__partitions = Partitions(self.__config)
     self.__checkMount = Chkmnt(self.__config)
@@ -223,16 +220,11 @@ class Menu(object):
   def exit(self):
       sys.exit(0)
       return
- 
-  def init_config(self):
-    try:
-      config = ConfigParser.ConfigParser()
-      config.read(CONFIG_PATH)      
-      return config
-    except Exception as e:
-      sys.stderr.write(repr(e) + " in config file.\n")
-      traceback.print_exc()
-
+  
+  def set_options(self, opts):
+    #future work
+    pass
+    
     
 def cls():
     # tmp = os.system('cls' if os.name=='nt' else 'clear')

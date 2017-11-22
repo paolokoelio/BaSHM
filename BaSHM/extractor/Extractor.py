@@ -51,6 +51,7 @@ class Extractor(object):
       # set pathname for extracting the timeline
       directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
       self.__fls.set_filename(self.__config.get('paths', 'cases') + '\\' + directory + '\\' + 'body.txt')
+      self.__fls.set_recursive(self.__config.getboolean('functionalities', 'recursive'))
       
       # set the physical device
       self.__fls.set_images([self.__partitions.get_sel_dev()['DeviceID']])

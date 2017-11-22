@@ -9,6 +9,7 @@ import subprocess as sp
 
 CONFIG_PATH = '..\config\config.cfg'
 
+
 class TSKExtractor(object):
     '''
     Extracts timeline using standalone TSK 4.5
@@ -41,14 +42,14 @@ class TSKExtractor(object):
         Constructor
         '''
         self.__partitions = partitions
-      
+        self.__config = config
+        
+        # Default args for tsk
         self.__long_listing = False
-        self.__recursive = False
+        self.__recursive = config.getboolean('functionalities', 'recursive')
         self.__print = False
         self.__hash = True
         self.__fout = None
-        
-        #Default args
         self.__image_type = 'raw'
         self.__fstype = 'ntfs'
         self.__images = None
@@ -56,9 +57,9 @@ class TSKExtractor(object):
         self.__inode = '/'
         self.__filename = None
         self.__device = None
-             
-        self.__config = config
-
+        
+        # parameter that may be useful in the future
+        self.__param = None
           
     def init_menu(self):
       
@@ -76,8 +77,8 @@ class TSKExtractor(object):
       self.init_menu()
       
       directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
-      self.__filename = self.__config.get('paths','cases') + '\\' + directory + '\\' + "bodyTSK.txt"
-      #print(self.__filename)
+      self.__filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + "bodyTSK.txt"
+      # print(self.__filename)
       self.__device = self.__partitions.get_sel_dev()['DeviceID']
       
       cmd = ''.join([
@@ -93,21 +94,46 @@ class TSKExtractor(object):
             ' -i ' + self.__image_type,
             ' -m "/" ',
             '-o ',
-            str(self.__offset/512),
+            str(self.__offset / 512),
             ' ' + self.__device,
 #             ' ' + self.__inode, makes TSK crash
             ' > ',
             self.__filename
             ])
 
-      #print(cmd)
+      # print(cmd)
       self.run_cmd(cmd)
+      
+            # now run convertion from storage.plaso file to .csv
+      print("Do you want to convert the bodyTSK.txt file to .csv? Press Enter or abort with Ctrl+C\n")
+      ch = raw_input(" >>  ")
+      
+      if ch == '':
+        cmd = ''.join([
+              self.__config.get('commands', 'perl'),
+              ' ',
+              self.__config.get('paths', 'tsk') + '\\' + 'mactime.pl',
+              ' ',
+
+              ' -d',
+              ' -p' if self.__param else '',
+              ' -b ' + self.__filename,
+              ' > ' +  self.__config.get('paths', 'cases') + '\\' + directory + '\\' + "timeline.csv"
+              ])
+  
+        print("Started conversion to .CSV: ")
+        self.run_cmd(cmd)
+      else: 
+        print("A body.txt file has been created in " + directory + "\n")
+        print("Use perl mactime.pl -d -b body.txt to extract the CSV manually, perl mactime.pl -h for help.\n")
+      
+      # print(cmd)
+      # self.run_cmd(cmd)
       
     def run_cmd(self, cmd):
       '''
         Prints and runs specified command
       '''
-      print('Needs to be run as Privileged User.')
       print('Issuing command: "' + cmd + '".')
       
       try:
@@ -125,7 +151,7 @@ class TSKExtractor(object):
       
       # where offset in block is
       off_index = 3
-      #print('{}'.format(self.__part_list[int(ch)]))
+      # print('{}'.format(self.__part_list[int(ch)]))
       self.__offset = int(self.__part_list[int(ch)][off_index])
     
     def exec_menu(self, ch):

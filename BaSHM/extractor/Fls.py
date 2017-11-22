@@ -14,11 +14,10 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import argparse
-import gc
-import pdb
+# import gc
+# import pdb
 import sys
-import time
-import traceback
+
 
 from examples import images
 import pytsk3
@@ -389,7 +388,7 @@ def Main():
     print('')
     return False
 
-  print(options)  
+  print(options)
   #return True
   
   fls = Fls()
