@@ -72,6 +72,7 @@ def main(argv=None):
 #         if opts.verbose > 0:
 #             print("verbosity level = %d" % opts.verbose)
         if opts.recursive:
+            #the -r option works only for TSK modules (i.e. not for super-timeline, that is recursive by default)
             print("recursive = %s" % opts.recursive)
             __config.set('functionalities', 'recursive', 'true')
             
