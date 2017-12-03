@@ -45,8 +45,9 @@ class L2t(object):
       
       self.init_menu()
       
-      directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
-      self.__filename = self.__config.get('paths', 'cases') + directory + '\\' + "storage.plaso"
+      model = str(self.__sel_dev['Model']).replace(' ', '_')
+      directory = str('case_' + model)
+      self.__filename = self.__config.get('paths', 'cases') + directory + '\\' + model + "storage.plaso"
 #       print(self.__filename)
       device = self.__partitions.get_sel_dev()['DeviceID']
       
@@ -72,7 +73,7 @@ class L2t(object):
               self.__config.get('paths', 'plaso'),
               self.__config.get('commands', 'psort'),
               ' -o l2tcsv',
-              ' -w ' + self.__config.get('paths', 'cases') + directory + '\\' + 'mac.csv',
+              ' -w ' + self.__config.get('paths', 'cases') + directory + '\\' + model + '_supertimeline.csv',
               ' -p' if self.__param else '',
               ' ' + self.__filename
               ])

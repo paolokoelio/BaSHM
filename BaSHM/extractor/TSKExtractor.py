@@ -7,8 +7,6 @@ Created on 20 nov 2017
 import subprocess as sp
 # from bashm.menu import Menu
 
-CONFIG_PATH = '..\config\config.cfg'
-
 
 class TSKExtractor(object):
     '''
@@ -76,8 +74,9 @@ class TSKExtractor(object):
       print("Launching TSK fls module..\n")
       self.init_menu()
       
-      directory = str('case_' + str(self.__sel_dev['Model'])).replace(' ', '_')
-      self.__filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + "bodyTSK.txt"
+      model = str(self.__sel_dev['Model']).replace(' ', '_')
+      directory = str('case_' + model)
+      self.__filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + "_body_TSK.txt"
       # print(self.__filename)
       self.__device = self.__partitions.get_sel_dev()['DeviceID']
       
@@ -104,7 +103,7 @@ class TSKExtractor(object):
       # print(cmd)
       self.run_cmd(cmd)
       
-            # now run convertion from storage.plaso file to .csv
+      # now run convertion from storage.plaso file to .csv
       print("Do you want to convert the bodyTSK.txt file to .csv? Press Enter or abort with Ctrl+C\n")
       ch = raw_input(" >>  ")
       
@@ -118,14 +117,14 @@ class TSKExtractor(object):
               ' -d',
               ' -p' if self.__param else '',
               ' -b ' + self.__filename,
-              ' > ' +  self.__config.get('paths', 'cases') + '\\' + directory + '\\' + "timeline.csv"
+              ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + "_timeline_TSK.csv"
               ])
   
         print("Started conversion to .CSV: ")
         self.run_cmd(cmd)
       else: 
-        print("A body.txt file has been created in " + directory + "\n")
-        print("Use perl mactime.pl -d -b body.txt to extract the CSV manually, perl mactime.pl -h for help.\n")
+        print("A body_TXT.txt file has been created in " + directory + "\n")
+        print("Use perl mactime.pl -d -b body_TSK.txt to extract the CSV manually, perl mactime.pl -h for help.\n")
       
       # print(cmd)
       # self.run_cmd(cmd)
@@ -167,5 +166,4 @@ class TSKExtractor(object):
               print("Invalid selection, please try again.\n")
               pass
       return 
-      
     

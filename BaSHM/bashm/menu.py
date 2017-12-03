@@ -93,7 +93,7 @@ class Menu(object):
     
     self.__chkHealth_menu = {
         '1':self.__checkHealth.createCaseFolder,
-        '2':self.__checkHealth.initialize,
+        '2':self.__checkHealth.init_menu,
         '3':self.__checkHealth.openDD,  # TODO
         '9':self.back,
         '0':self.exit,

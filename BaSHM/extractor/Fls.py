@@ -1,13 +1,14 @@
 '''
 Created on 10 nov 2017
 
-Class responsible for iterating through the selected image and construct a timeline of all data contained in the $MFT
+Class responsible for iterating through the selected image and construct a timeline of all data contained in the FS
 
 @author: koelio
 '''
 #!/usr/bin/python
 #
 # Copyright 2011, Michael Cohen <scudette@gmail.com>.
+# Extended by Pavlo Burda, <paolokoelio@gmail.com>
 #     http://www.apache.org/licenses/LICENSE-2.0
 
 from __future__ import (absolute_import, division,
@@ -17,11 +18,8 @@ import argparse
 # import gc
 # import pdb
 import sys
-
-
 from examples import images
 import pytsk3
-
 from utils.mode_convert import convert_to_symbolic
 
 
@@ -66,7 +64,7 @@ class Fls(object):
     self._print = False
     self._fout = None
     
-    #Default args
+    #Default args from BASLAM
     self.__image_type = 'raw'
     self.__images = None
     self.__offset = 0
@@ -74,33 +72,6 @@ class Fls(object):
     #self.__print = False
     #self.__recursive = True
     self.__filename = None
-
-#   def filemode(self, m):
-#       '''
-#       Mode m to be converted
-#       '''
-#       oExec = bool(m & 0001)
-#       oWrite = bool(m & 0002)
-#       oRead = bool(m & 0004)
-#       gExec = bool(m & 0010)
-#       gWrite = bool(m & 0020)
-#       gRead = bool(m & 0040)
-#       otExec = bool(m & 0100)
-#       otWrite = bool(m & 0200)
-#       otRead = bool(m & 0400)
-#       
-#       modes = {oExec:'e',
-#                oWrite:'w',
-#                oRead:'r',
-#                gExec:'e',
-#                gWrite:'w',
-#                gRead:'r',
-#                otExec: 'e',
-#                otWrite: 'w',
-#                otRead: 'r',
-#                }
-#       
-#       return str()
 
   def list_directory(self, directory, stack=None):
     stack.append(directory.info.fs_file.meta.addr)
@@ -159,9 +130,7 @@ class Fls(object):
     # List the actual files (any of these can raise for any reason).
     self._img_info = images.SelectImage(image_type, filenames)
 
-  def open_fout(self, filename):
-    # Outputs to a UTF-8 .txt file
-    
+  def open_fout(self, filename): 
     try:
       if not self._print:
         self._fout = open(filename, 'wb')
@@ -210,13 +179,10 @@ class Fls(object):
           else:
             filename = name.name.decode("utf-8")
 
-#           times = [meta.crtime, meta.ctime, meta.mtime, meta.atime] #probably wron disposition
           times = [meta.atime, meta.mtime, meta.ctime, meta.crtime]
 
 
-#           choppiamo il primo char perche' viene '?'
 #           no filemode attribute for python2.7, thus custom method         
-#           mode = self.filemode(meta.mode)[1:]
           mode = convert_to_symbolic(meta.mode)
 
           permissions = "{0}{1}".format(directory_entry_type, ''.join(mode))

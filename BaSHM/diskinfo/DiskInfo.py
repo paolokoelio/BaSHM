@@ -37,26 +37,22 @@ class DiskInfo(object):
       self.printMenu()
             
       ch = raw_input(" >>  ")
-      self.exec_menu(ch)
-    
-    def initialize(self):
-      self.init_menu()
-        
-    # TODO exception handling   
+      self.exec_menu(ch)  
     
     def chkhealth(self, device):
 
       #create directory if it doesn't exist
-      directory = str('case_' + str(device.model)).replace(' ', '_')
+      model = str(device.model).replace(' ', '_')
+      directory = 'case_' + model
       self.__dir_writer.createDir(directory)
-      self.__f_name = str(directory + '\\' + self.__f_name)
+      self.__f_name = str(directory + '\\' + model + '_' + self.__f_name)
       #print(self.__f_name)
   
       #write to directory 
       self.__writer.open(self.__f_name)
       print("\n")
 
-      out = 'Device Data:' + '\n' + 'name: ' + str(device.name) + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: '  # TODO hash
+      out = 'Device Data:' + '\n' + 'name: ' + str(device.name) + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: TODO'  # TODO hash
       print(out)
       self.__writer.write(out)
 
@@ -141,7 +137,7 @@ class DiskInfo(object):
                 # select the device to test, -1 because in menu prints at 1
                 self.__device = self.__devlist.devices[int(ch) - 1]
                 self.chkhealth(self.__device)
-            except IndexError, Exception:
+            except IndexError:
                 print("Invalid selection, please try again. YO\n")
                 traceback.print_exc() 
                 
