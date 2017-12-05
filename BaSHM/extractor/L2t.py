@@ -5,6 +5,7 @@ Created on 20 nov 2017
 '''
 
 import subprocess as sp
+from utils.Timer import Timer
 # from bashm.menu import Menu
 
 CONFIG_PATH = '..\config\config.cfg'
@@ -30,6 +31,7 @@ class L2t(object):
         '''
         self.__partitions = partitions
         self.__config = config
+        self.timer = Timer()
 
     def init_menu(self):
       
@@ -87,7 +89,14 @@ class L2t(object):
                 ])
     
           print("Starting conversion to .CSV: ")
+
+          self.timer.start()
+
           self.run_cmd(cmd)
+
+          self.timer.stop()
+          self.timer.printDuration()
+          
 
           self.convertHtml(directory, model)
 
@@ -157,5 +166,8 @@ class L2t(object):
               self.__choice = ch
           except KeyError:
               print("Invalid selection, please try again.\n")
-              pass
+          except IndexError:
+              print("Out of index, please choose frome the list again.\n")
+              self.init_menu()
       return 
+

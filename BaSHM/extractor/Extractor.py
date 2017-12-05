@@ -6,6 +6,7 @@ Created on 10 nov 2017
 
 import subprocess as sp
 from Fls import Fls
+from utils.Timer import Timer
 
 
 class Extractor(object):
@@ -30,6 +31,7 @@ class Extractor(object):
       '''
       self.__partitions = partitions
       self.__config = config
+      self.timer = Timer()
       self.__fls = Fls()
       
     def init_menu(self):
@@ -64,8 +66,15 @@ class Extractor(object):
       # set the physical device
       self.__fls.set_images([self.__partitions.get_sel_dev()['DeviceID']])
       
-      # we leave the rest default, and launch fls (TODO: set timer)
-      if self.__fls.extractTimel() == 0:
+
+      self.timer.start()
+      # we leave the rest default, and launch fls
+      out = self.__fls.extractTimel()
+          
+      self.timer.stop()
+      self.timer.printDuration()
+
+      if out == 0:
         print("Success! Written to {} ".format(filename))
         
         self.convertCsv(filename, directory, model)
@@ -154,7 +163,9 @@ class Extractor(object):
               self.setOff(ch)
           except KeyError:
               print("Invalid selection, please try again.\n")
-              pass
+          except IndexError:
+              print("Out of index, please choose frome the list again.\n")
+              self.init_menu()
       return 
   
     def run_cmd(self, cmd):

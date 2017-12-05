@@ -123,6 +123,9 @@ class Partitions(object):
 #                 self.__part_list = self.runMmls(ch)
             except KeyError:
                 print("Invalid selection, please try again.\n")
+            except IndexError:
+                print("Out of index, please choose frome the list again.\n")
+                self.init_menu()
 
     def run_cmd(self, cmd):
       '''

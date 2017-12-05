@@ -5,6 +5,7 @@ Created on 20 nov 2017
 '''
 
 import subprocess as sp
+from utils.Timer import Timer
 # from bashm.menu import Menu
 
 
@@ -41,6 +42,7 @@ class TSKExtractor(object):
         '''
         self.__partitions = partitions
         self.__config = config
+        self.timer = Timer()
         
         # Default args for tsk
         self.__long_listing = False
@@ -103,8 +105,15 @@ class TSKExtractor(object):
             ])
 
       # print(cmd)
+
+      self.timer.start()
+
       self.run_cmd(cmd)
       
+      self.timer.stop()
+      self.timer.printDuration()
+
+
       # now run convertion from storage.plaso file to .csv
       self.convertCsv(self.__filename,directory,model)
 
@@ -204,6 +213,8 @@ class TSKExtractor(object):
               self.setOff(ch)
           except KeyError:
               print("Invalid selection, please try again.\n")
-              pass
+          except IndexError:
+              print("Out of index, please choose frome the list again.\n")
+              self.init_menu()
       return 
     
