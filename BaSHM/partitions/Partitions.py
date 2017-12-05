@@ -13,11 +13,13 @@ class Partitions(object):
     Handles logical structure information of a device
     '''
     __devlist = None
+    __devices = None
     __mmls = None
     __config = None
     _selDev = None
     __selOffset = 0
     __part_list = None
+    __choice = None
 
     def __init__(self, config):
       '''
@@ -40,11 +42,29 @@ class Partitions(object):
       
       out = self.run_cmd(cmd)
 
-      return self.parse_out(out)
+      devices = self.parse_out(out)
+
+      # this commented piece of code tries to match the serial numbers of devices
+      # to their DeviceID (i.e. \\.\physicaldrive*), but for consistency reasons
+      # it has been commented and abbandoned
+      # cmd = ''.join([self.__config.get('commands', 'physicalmedia')])
+      
+      # out = self.run_cmd(cmd)
+
+      # physicalMedia = self.parse_out(out)
+
+      # new_device_list =[]
+      # for device in devices:
+      #   for medium in physicalMedia:
+      #     if str(medium['Tag']) in str(device['DeviceID']):
+      #       device['SerialNumber'] = medium['SerialNumber']
+
+      return devices
  
     def print_menu(self):
       
       self.__devlist = self.getDevices()
+      # self.__devlist = self.__devices
       
       i = 1
       for device in self.__devlist:
@@ -71,11 +91,12 @@ class Partitions(object):
 
       return out
     
-    def runMmls(self, ch):
-      
+    def runMmls(self):
+      ch = self.__choice
       self.__mmls = Mmls()
       self.__mmls.set_dev_path(self.__devlist[int(ch) - 1]['DeviceID'])
       self.__mmls.set_desc(str(self.__devlist[int(ch) - 1]['Model']))
+      
       return self.__mmls.mmls()
     
 #   TODO future work open shell with typed mmls (allows for original use of mmls)    
@@ -90,8 +111,9 @@ class Partitions(object):
         else:
             try:
                 # select a device and get it's list partition by running mmls
+                self.__choice = ch
                 self._selDev = self.__devlist[int(ch) - 1]
-                self.__part_list = self.runMmls(ch)
+#                 self.__part_list = self.runMmls(ch)
             except KeyError:
                 print("Invalid selection, please try again.\n")
 
@@ -99,7 +121,6 @@ class Partitions(object):
       '''
         Prints and runs specified command
       '''
-      print('Needs to be mmls as Privileged User.')
       print('Issuing command: "' + str(''.join(cmd)) + '".')
       
       try:

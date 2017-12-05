@@ -14,7 +14,7 @@ It defines main + some error control (and logging TODO)
 @license:    CC
 
 @contact:    paolokoelio@gmail.com
-@deffield    updated: 23/11
+@deffield    updated: 08/12
 '''
 
 import sys, traceback
@@ -28,7 +28,7 @@ import ConfigParser  # import not compatible with python3, should be configparse
 __all__ = []
 __version__ = 0.1
 __date__ = '2017-10-23'
-__updated__ = '2017-11-24'
+__updated__ = '2017-12-08'
 __config = None
 CONFIG_PATH = '..\config\config.cfg'
 
@@ -54,8 +54,8 @@ def main(argv=None):
     try:
         # setup option parser
         parser = OptionParser(version=program_version_string, epilog=program_longdesc, description=program_license)
-        parser.add_option("-r", "--recursive", dest="recursive", action="store_true", default=False,
-                          help="set recursive option for timeline extraction")
+        parser.add_option("-n", "--non-recursive", dest="recursive", action="store_true", default=False,
+                          help="un-set recursiveness option for timeline extraction")
 #         parser.add_option("-o", "--out", dest="outfile", help="set output path [default: %default]", metavar="FILE")
 #         parser.add_option("-v", "--verbose", dest="verbose", action="count", help="set verbosity level [default: %default]")
 
@@ -73,8 +73,8 @@ def main(argv=None):
 #             print("verbosity level = %d" % opts.verbose)
         if opts.recursive:
             #the -r option works only for TSK modules (i.e. not for super-timeline, that is recursive by default)
-            print("recursive = %s" % opts.recursive)
-            __config.set('functionalities', 'recursive', 'true')
+            print("non-recursive = %s" % opts.recursive)
+            __config.set('functionalities', 'recursive', 'false')
             
 #         if opts.outfile:
 #             print("outfile = %s" % opts.outfile)
@@ -85,9 +85,11 @@ def main(argv=None):
 #         Launch main menu
         print("Welcome to BaHSM\n")
         
+
         menu = Menu(__config)
-        menu.set_options(False) # future work
+#           menu.set_options(False) # future work
         menu.main_menu()
+
 #       #  test
 #         from partitions.Partitions import Partitions
 #         from extractor.TSKExtractor import TSKExtractor #test

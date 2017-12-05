@@ -221,9 +221,9 @@ class Menu(object):
       sys.exit(0)
       return
   
-  def set_options(self, opts):
-    #future work
-    pass
+#   def set_options(self, opts):
+#     #future work
+#     pass
     
     
 def cls():

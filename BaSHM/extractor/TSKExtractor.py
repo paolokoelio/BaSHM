@@ -55,6 +55,7 @@ class TSKExtractor(object):
         self.__inode = '/'
         self.__filename = None
         self.__device = None
+        self.__choice = None
         
         # parameter that may be useful in the future
         self.__param = None
@@ -63,7 +64,7 @@ class TSKExtractor(object):
       
       # Exploiting the menu listing feature from Partitions()
       self.__partitions.init_menu()
-      self.__part_list = self.__partitions.get_part_list()
+      self.__part_list = self.__partitions.runMmls()
       self.__sel_dev = self.__partitions.get_sel_dev()
       
       ch = raw_input(" >>  ")
@@ -74,9 +75,10 @@ class TSKExtractor(object):
       print("Launching TSK fls module..\n")
       self.init_menu()
       
-      model = str(self.__sel_dev['Model']).replace(' ', '_')
+      model = str(self.__sel_dev['Model']).replace(' ', '')
+      model = model.replace('USBDevice', '')
       directory = str('case_' + model)
-      self.__filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + "_body_TSK.txt"
+      self.__filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice  +  "_body_TSK.txt"
       # print(self.__filename)
       self.__device = self.__partitions.get_sel_dev()['DeviceID']
       
@@ -117,7 +119,7 @@ class TSKExtractor(object):
               ' -d',
               ' -p' if self.__param else '',
               ' -b ' + self.__filename,
-              ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + "_timeline_TSK.csv"
+              ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_timeline_TSK.csv"
               ])
   
         print("Started conversion to .CSV: ")
@@ -141,10 +143,11 @@ class TSKExtractor(object):
             stderr=sp.STDOUT,
             shell=True)
           print('\n')
+          return out
       except sp.CalledProcessError as e:
           print("\nSomething went wrong. You may retry this action." + " ret_code: " + str(e.returncode) + "\n")
       
-      return out
+      
     
     def setOff(self, ch):
       
@@ -161,6 +164,7 @@ class TSKExtractor(object):
       else:
           try:
               # set the offset of the corresponding partition
+              self.__choice = ch
               self.setOff(ch)
           except KeyError:
               print("Invalid selection, please try again.\n")

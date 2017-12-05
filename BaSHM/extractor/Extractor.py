@@ -22,6 +22,7 @@ class Extractor(object):
     __sel_dev = None  # device selected in Partition class during menu choice
     __offset = None
     __suffix = '_body.txt'
+    __choice = None
 
     def __init__(self, config, partitions):
       '''
@@ -35,7 +36,9 @@ class Extractor(object):
       
       # Exploiting the menu listing feature from Partitions()
       self.__partitions.init_menu()
-      self.__part_list = self.__partitions.get_part_list()
+      self.__part_list = self.__partitions.runMmls()
+      
+      #self.__part_list = self.__partitions.get_part_list()
       self.__sel_dev = self.__partitions.get_sel_dev()
       
       ch = raw_input(" >>  ")
@@ -47,13 +50,14 @@ class Extractor(object):
       '''
       print("Launching fls module..\n")
       self.init_menu()
-         
+      
       self.__fls.set_offset(self.__offset)
       
       # set pathname for extracting the timeline
-      model = str(self.__sel_dev['Model']).replace(' ', '_')
+      model = str(self.__sel_dev['Model']).replace(' ', '')
+      model = model.replace('USBDevice', '')
       directory = str('case_' + model)
-      filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + self.__suffix
+      filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_'+ str(self.__choice) + self.__suffix
       self.__fls.set_filename(filename)
       self.__fls.set_recursive(self.__config.getboolean('functionalities', 'recursive'))
       
@@ -77,7 +81,7 @@ class Extractor(object):
   
                 ' -d',
                 ' -b ' + filename,
-                ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + "_timeline.csv"
+                ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_timeline.csv"
                 ])
     
           print("Started conversion to .CSV: ")
@@ -128,6 +132,7 @@ class Extractor(object):
       else:
           try:
               # set the offset of the corresponding partition
+              self.__choice = ch
               self.setOff(ch)
           except KeyError:
               print("Invalid selection, please try again.\n")

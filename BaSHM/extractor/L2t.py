@@ -21,6 +21,7 @@ class L2t(object):
     __partitions = None
     __part_list = None
     __sel_dev = None
+    __choice = None
     __param = False
 
     def __init__(self, config, partitions):
@@ -35,19 +36,20 @@ class L2t(object):
       print("Choose the disk from which to extract super-timeline\n")
       # Exploiting the menu listing feature from Partitions()
       self.__partitions.init_menu()
-#      self.__part_list = self.__partitions.get_part_list()
+      self.__part_list = self.__partitions.runMmls()
       self.__sel_dev = self.__partitions.get_sel_dev()
       
-#       ch = raw_input(" >>  ")
-#       self.exec_menu(ch)
+      ch = raw_input(" >>  ")
+      self.exec_menu(ch)
           
     def stimel(self):
       
       self.init_menu()
       
-      model = str(self.__sel_dev['Model']).replace(' ', '_')
+      model = str(self.__sel_dev['Model']).replace(' ', '')
+      model = model.replace('USBDevice', '')
       directory = str('case_' + model)
-      self.__filename = self.__config.get('paths', 'cases') + directory + '\\' + model + "storage.plaso"
+      self.__filename = self.__config.get('paths', 'cases') + directory + '\\' + model + '_partition_' + str(self.__choice) + "_storage.plaso"
 #       print(self.__filename)
       device = self.__partitions.get_sel_dev()['DeviceID']
       
@@ -66,23 +68,26 @@ class L2t(object):
       
       # now run convertion from storage.plaso file to .csv
       print("Do you want to convert the storage.plaso file to .csv? Press Enter or abort with Ctrl+C\n")
-      ch = raw_input(" >>  ")
-      
-      if ch == '':
-        cmd = ''.join([
-              self.__config.get('paths', 'plaso'),
-              self.__config.get('commands', 'psort'),
-              ' -o l2tcsv',
-              ' -w ' + self.__config.get('paths', 'cases') + directory + '\\' + model + '_supertimeline.csv',
-              ' -p' if self.__param else '',
-              ' ' + self.__filename
-              ])
-  
-        print("Startedng conversion to .CSV: ")
-        self.run_cmd(cmd)
-      else: 
-        print("A storage.plaso file has been created in " + directory + "\n")
-        print("Use psort -o l2tcsv -w mac.csv storage.plaso to extract manually, psort -h for help.\n")
+      try: 
+        ch = raw_input(" >>  ")
+        
+        if ch == '':
+          cmd = ''.join([
+                self.__config.get('paths', 'plaso'),
+                self.__config.get('commands', 'psort'),
+                ' -o l2tcsv',
+                ' -w ' + self.__config.get('paths', 'cases') + directory + '\\' + model + '_supertimeline.csv',
+                ' -p' if self.__param else '',
+                ' ' + self.__filename
+                ])
+    
+          print("Startedng conversion to .CSV: ")
+          self.run_cmd(cmd)
+        else: 
+          print("A storage.plaso file has been created in " + directory + "\n")
+          print("Use psort -o l2tcsv -w mac.csv storage.plaso to extract manually, psort -h for help.\n")
+      except KeyboardInterrupt:
+        print('Ended by user.')
       
     def run_cmd(self, cmd):
       '''
@@ -114,7 +119,7 @@ class L2t(object):
       else:
           try:
               # set the offset of the corresponding partition
-              self.setOff(ch)
+              self.__choice = ch
           except KeyError:
               print("Invalid selection, please try again.\n")
               pass
