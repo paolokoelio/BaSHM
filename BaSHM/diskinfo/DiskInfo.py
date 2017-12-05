@@ -65,11 +65,11 @@ class DiskInfo(object):
         self.__writer.open(self.__f_name)
         print("\n")
 
-        out = 'Device Data:' + '\n'  + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: TODO' + 'name: ' + str(device.name) # TODO hash
+        out = 'Device Data:' + '\n'  + 'mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: TODO ' + 'name: ' + str(device.name) # TODO hash
         print(out)
         self.__writer.write(out)
 
-        out = "\nSMART check for "  + " " + str(device.model) + '(' + str(device.name) + "):\n"
+        out = "\nSMART check for " + str(device.model) + '(' + str(device.name) + "):\n"
         print(out)
         
         self.__writer.write(out)
@@ -107,9 +107,9 @@ class DiskInfo(object):
     def createCaseFolder(self):
       
       print('\n')
-      print("You need to create a directory for the device data, choose the corresponding device:\n")
+      print("You need to create a directory for the device data.\n")
       self.__partitions.init_menu()
-      print('dopo partitions init_menu')
+      
 
       # self.__part_list = self.__partitions.get_part_list()
       sel_dev = self.__partitions.get_sel_dev()
@@ -188,7 +188,7 @@ class DiskInfo(object):
         else:
             try:
                 # select the device to test, -1 because in menu prints at 1
-                print(self.__devlist.devices)
+                #print(self.__devlist.devices)
                 self.__device = self.__devlist.devices[int(ch) - 1]
                 self.chkhealth(self.__device)
             except IndexError:

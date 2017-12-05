@@ -72,31 +72,37 @@ class Extractor(object):
         
       else:
         print("Uh-oh")
+
+      return
     
     def convertCsv(self, filename, directory, model):    # now run convertion
       print("Do you want to convert the body.txt file to .csv? Type y (or yes) to continue or abort with Enter\n")
-      ch = raw_input(" >>  ")
       
-      if ch in ['yes', 'y']:
-        cmd = ''.join([
-              self.__config.get('commands', 'perl'),
-              ' ',
-              self.__config.get('paths', 'tsk') + '\\' + 'mactime.pl',
-              ' ',
+      try:
+        ch = raw_input(" >>  ")
+        
+        if ch in ['yes', 'y']:
+          cmd = ''.join([
+                self.__config.get('commands', 'perl'),
+                ' ',
+                self.__config.get('paths', 'tsk') + '\\' + 'mactime.pl',
+                ' ',
 
-              ' -d',
-              ' -b ' + filename,
-              ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_timeline.csv"
-              ])
-  
-        print("Started conversion to .CSV: ")
-        self.run_cmd(cmd)
-        
-        self.convertHtml(directory, model)
-        
-      else: 
-        print("A body.txt file has been created in " + directory + "\n")
-        print("Use perl mactime.pl -d -b body.txt to extract the CSV manually, perl mactime.pl -h for help.\n")
+                ' -d',
+                ' -b ' + filename,
+                ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_timeline.csv"
+                ])
+    
+          print("Started conversion to .CSV: ")
+          self.run_cmd(cmd)
+          
+          self.convertHtml(directory, model)
+          
+        else: 
+          print("A body.txt file has been created in " + directory + "\n")
+          print("Use perl mactime.pl -d -b body.txt to extract the CSV manually, perl mactime.pl -h for help.\n")
+      except KeyboardInterrupt:
+        print('Ended by user.')
     
     def convertHtml(self, directory, model):
         print("Do you want to generate an HTML report from the .CSV? Type y (or yes) to continue or abort with Enter\n")

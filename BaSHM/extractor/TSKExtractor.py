@@ -12,7 +12,7 @@ class TSKExtractor(object):
     '''
     Extracts timeline using standalone TSK 4.5
     '''
-
+# Original --help of TSK 4.5
 # usage: fls.exe [-adDFlhpruvV] [-f fstype] [-i imgtype] [-b dev_sector_size] [-m dir/] [-o imgoffset] [-z ZONE] [-s seconds] image [images] [inode]
 #         If [inode] is not given, the root directory is used
 #         -a: Display "." and ".." entries
@@ -106,31 +106,67 @@ class TSKExtractor(object):
       self.run_cmd(cmd)
       
       # now run convertion from storage.plaso file to .csv
-      print("Do you want to convert the bodyTSK.txt file to .csv? Press Enter or abort with Ctrl+C\n")
-      ch = raw_input(" >>  ")
-      
-      if ch == '':
-        cmd = ''.join([
-              self.__config.get('commands', 'perl'),
-              ' ',
-              self.__config.get('paths', 'tsk') + '\\' + 'mactime.pl',
-              ' ',
+      self.convertCsv(self.__filename,directory,model)
 
-              ' -d',
-              ' -p' if self.__param else '',
-              ' -b ' + self.__filename,
-              ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_timeline_TSK.csv"
-              ])
-  
-        print("Started conversion to .CSV: ")
-        self.run_cmd(cmd)
-      else: 
-        print("A body_TXT.txt file has been created in " + directory + "\n")
-        print("Use perl mactime.pl -d -b body_TSK.txt to extract the CSV manually, perl mactime.pl -h for help.\n")
-      
-      # print(cmd)
-      # self.run_cmd(cmd)
-      
+      return
+     
+    def convertCsv(self, filename, directory, model):    # now run convertion
+      print("Do you want to convert the body.txt file to .csv? Type y (or yes) to continue or abort with Enter\n")
+      try:
+
+        ch = raw_input(" >>  ")
+        
+        if ch in ['yes', 'y']:
+          cmd = ''.join([
+                self.__config.get('commands', 'perl'),
+                ' ',
+                self.__config.get('paths', 'tsk') + '\\' + 'mactime.pl',
+                ' ',
+
+                ' -d',
+                ' -b ' + filename,
+                ' > ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_timelineTSK.csv"
+                ])
+    
+          print("Started conversion to .CSV: ")
+          self.run_cmd(cmd)
+          
+          self.convertHtml(directory, model)
+          
+        else: 
+          print("A body.txt file has been created in " + directory + "\n")
+          print("Use perl mactime.pl -d -b body.txt to extract the CSV manually, perl mactime.pl -h for help.\n")
+
+      except KeyboardInterrupt:
+        print('Ended by user.')
+    
+    def convertHtml(self, directory, model):
+        print("Do you want to generate an HTML report from the .CSV? Type y (or yes) to continue or abort with Enter\n")
+        ch = raw_input(" >>  ")
+        
+        if ch in ['yes', 'y']:
+          print("Please set the delta_t threshold in seconds, or press Enter for default of 60s.\n")
+          min_t = raw_input(" >>  ")
+          
+          cmd = ''.join([
+                self.__config.get('commands', 'python'),
+                ' ',
+                self.__config.get('paths', 'poggi'),
+                self.__config.get('commands', 'lister'),
+                (' -t ' +  min_t) if min_t != '' else '',
+                ' -template ' + self.__config.get('paths', 'poggi') + self.__config.get('names', 'template'),
+                ' -f ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_timelineTSK.csv"
+                ' -o ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_reportTSK.html"
+                ])
+    
+          print("Started conversion to HTML: ")
+          #print(cmd)
+          self.run_cmd(cmd)
+        else: 
+          print("A .CSV file has been created in " + directory + "\n")
+          print("Use python Lister.py to generate an HTML report manually, python Lister.py -h for help.\n")
+
+
     def run_cmd(self, cmd):
       '''
         Prints and runs specified command

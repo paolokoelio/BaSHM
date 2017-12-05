@@ -67,6 +67,11 @@ class L2t(object):
       self.run_cmd(cmd)
       
       # now run convertion from storage.plaso file to .csv
+      self.converCsv(self.__filename, directory, model)
+
+      return
+
+    def convertCsv(self, filename, directory, model):
       print("Do you want to convert the storage.plaso file to .csv? Press Enter or abort with Ctrl+C\n")
       try: 
         ch = raw_input(" >>  ")
@@ -78,16 +83,46 @@ class L2t(object):
                 ' -o l2tcsv',
                 ' -w ' + self.__config.get('paths', 'cases') + directory + '\\' + model + '_supertimeline.csv',
                 ' -p' if self.__param else '',
-                ' ' + self.__filename
+                ' ' + filename
                 ])
     
-          print("Startedng conversion to .CSV: ")
+          print("Starting conversion to .CSV: ")
           self.run_cmd(cmd)
+
+          self.convertHtml(directory, model)
+
+
         else: 
           print("A storage.plaso file has been created in " + directory + "\n")
           print("Use psort -o l2tcsv -w mac.csv storage.plaso to extract manually, psort -h for help.\n")
       except KeyboardInterrupt:
         print('Ended by user.')
+
+    def convertHtml(self, directory, model):
+        print("Do you want to generate an HTML report from the .CSV? Type y (or yes) to continue or abort with Enter\n")
+        ch = raw_input(" >>  ")
+        
+        if ch in ['yes', 'y']:
+          print("Please set the delta_t threshold in seconds, or press Enter for default of 60s.\n")
+          min_t = raw_input(" >>  ")
+          
+          cmd = ''.join([
+                self.__config.get('commands', 'python'),
+                ' ',
+                self.__config.get('paths', 'poggi'),
+                self.__config.get('commands', 'lister'),
+                (' -t ' +  min_t) if min_t != '' else '',
+                ' -template ' + self.__config.get('paths', 'poggi') + self.__config.get('names', 'template'),
+                ' -f ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_supertimeline.csv"
+                ' -o ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_report_l2t.html"
+                ])
+    
+          print("Started conversion to HTML: ")
+          #print(cmd)
+          self.run_cmd(cmd)
+        else: 
+          print("A .CSV file has been created in " + directory + "\n")
+          print("Use python Lister.py to generate an HTML report manually, python Lister.py -h for help.\n")
       
     def run_cmd(self, cmd):
       '''
