@@ -35,7 +35,14 @@ class Partitions(object):
       
       ch = raw_input(" >>  ")
       self.exec_menu(ch)
-    
+
+    def getPartInfo(self):
+
+      self.print_menu()
+      ch = raw_input(" >>  ")
+      self.exec_menu(ch)
+      self.runMmls()
+
     def getDevices(self):
       
       cmd = ''.join([self.__config.get('commands', 'physicaldevice')])

@@ -44,9 +44,8 @@ class Menu(object):
                               "0. Quit"
                               ]
   checkHealthLabels = ["Perform SMART Health Test:",  # TODO add disk info entry
-                              "1. Create case folder",
-                              "2. SMART Health test with smartctl (smartmontools)",
-                              "3. Open dd shell (future work)",
+                              "1. SMART Health test with smartmontools",
+                              "2. Open dd shell (future work)",
                               "9. Back",
                               "0. Quit"
                               ]
@@ -60,9 +59,9 @@ class Menu(object):
     ]
   
   extractorLabels = ["Choose the artifacts to TSKtimel:",
-                              "1. Timeline (TSK 3 custom)",
+                              "1. Timeline TSK 4.5",
                               "2. Super-timeline (log2timeline)",
-                              "3. Timeline (TSK 4.5, similar to 1. but with 4.5 binaries)",
+                              "3. Timeline with custom TSK library (experimental)",
                               "4. Browse only (future work)",
                               "9. Back",
                               "0. Quit"
@@ -92,24 +91,23 @@ class Menu(object):
     }
     
     self.__chkHealth_menu = {
-        '1':self.__checkHealth.createCaseFolder,
-        '2':self.__checkHealth.init_menu,
-        '3':self.__checkHealth.openDD,  # TODO
+        '1':self.__checkHealth.init_menu,
+        '2':self.__checkHealth.openDD,  # TODO
         '9':self.back,
         '0':self.exit,
     }
     
     self.__extractor_menu = {
-        '1':self.__extractor.timel,
+        '1':self.__TSKextractor.TSKtimel,
         '2':self.__L2t.stimel,
-        '3':self.__TSKextractor.TSKtimel,
+        '3':self.__extractor.timel,
         '4':self.__extractor.browse,
         '9':self.back,
         '0':self.exit,
     }
     
     self.__partitions_menu = {
-        '1':self.__partitions.init_menu,
+        '1':self.__partitions.getPartInfo,
         '2':self.__partitions.openShell,
         '9':self.back,
         '0':self.exit,

@@ -23,6 +23,7 @@ class DiskInfo(object):
     __menu_devs = {}
     __f_name = 'disk_data.txt'
     __sel_model = ''
+    __directory = ''
 
     def __init__(self, partitions):
         '''
@@ -50,24 +51,25 @@ class DiskInfo(object):
 
       self.createCaseFolder()
 
-      model = str(device.model).replace(' ', '')
-      directory = 'case_' + self.__sel_model
+#       model = str(device.model).replace(' ', '')
+#       model.replace('USBDevice', '')
+#       self.__sel_model = model
+#       self.__directory = 'case_' + self.__sel_model
       # self.__dir_writer.createDir(directory)
 
       try:
 
-
-        self.__f_name = str(directory + '\\' + model + '_' + self.__f_name)
+        self.__f_name = str(self.__directory + '\\' + self.__sel_model + '_' + self.__f_name)
     
-        #write to directory 
+        # write to directory 
         self.__writer.open(self.__f_name)
         print("\n")
 
-        out = 'Device Data:' + '\n' + 'name: ' + str(device.name) + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: TODO'  # TODO hash
+        out = 'Device Data:' + '\n'  + ', mod: ' + str(device.model) + ', sn: ' + str(device.serial) + ', MD5: TODO' + 'name: ' + str(device.name) # TODO hash
         print(out)
         self.__writer.write(out)
 
-        out = "\nSMART check for " + str(device.name) + " " + str(device.model) + ":\n"
+        out = "\nSMART check for "  + " " + str(device.model) + '(' + str(device.name) + "):\n"
         print(out)
         
         self.__writer.write(out)
@@ -88,41 +90,44 @@ class DiskInfo(object):
                               'ID#', 'ATTRIBUTE_NAME', 'CUR', 'WST', 'THR',
                               'TYPE', 'UPDATED', 'WHEN_FAIL', 'RAW'))
                     header_printed = True
-                self.__writer.write(str(attr)+"\n")
+                self.__writer.write(str(attr) + "\n")
         if not header_printed:
             print("This device does not support SMART attributes.")
           
         self.__writer.close()
-        #flush filename
+        # flush name values
         self.__f_name = 'disk_data.txt'
+        self.__directory = ''
 
       except IOError as io:
-        #traceback.print_exc()
+        # traceback.print_exc()
         print("Consider creating a case directory first.\n{} \n".format(io))    
         return 2
 
     def createCaseFolder(self):
-      #self.printMenu()
-      print("Create a directory for the device data, choose the corresponding device:\n")
+      
+      print('\n')
+      print("You need to create a directory for the device data, choose the corresponding device:\n")
       self.__partitions.init_menu()
+      print('dopo partitions init_menu')
 
-      #self.__part_list = self.__partitions.get_part_list()
+      # self.__part_list = self.__partitions.get_part_list()
       sel_dev = self.__partitions.get_sel_dev()
 
       model = str(sel_dev['Model']).replace(' ', '')
-
+      model = model.replace('USBDevice', '')
       self.__sel_model = model
 
-      ch = raw_input(" >> {}{}{}".format('cases\\', 'case_', model)) or ('case_' + str(model))
+      ch = raw_input(" >> {}{}{}".format('cases\\', 'case_', self.__sel_model)) or ('case_' + str(self.__sel_model))
 
       print('\n')
-      directory = str(ch).replace(' ', '')
-      self.__dir_writer.createDir(directory)
-      #self.__writer.createDir(directory)
+      self.__directory = str(ch).replace(' ', '')
+      self.__directory.replace('USBDevice', '')
+      self.__dir_writer.createDir(self.__directory)
+      # self.__writer.createDir(directory)
   
     def openDD(self):
       pass
-
 
     # this commented code was an attemp to match the sda, sdb etc device names 
     # to their Device ID in Win32 Device namespace, i.e. \\.\PhysicalDrive*
@@ -154,37 +159,26 @@ class DiskInfo(object):
     #   print('\n')
     #   self.__devlist.devices = new_devices
 
-
     def printMenu(self):
       
       # needed for consistency between names, i.e. /dev/sda and \\.\.physicaldrive0
       # self.__windev = self.__partitions.get_devlist()
-      #print(self.__windev)
+      # print(self.__windev)
       
       print('Loading devices...')
       self.__devlist = DeviceList()
-      print('Choose the device:\n')
+      print('Choose the device to test:\n')
       i = 1
       new_devices = []
 
-      for device in self.__devlist.devices:    
-          #reordering the list for consistency
+      for device in self.__devlist.devices:
+          # reordering the list for consistency
           new_devices.append(device)
-          print("%d. %s serial:%s, %s device on %s" % (
+          print("%d. %s sn:%s, %s device on %s" % (
               i, device.model, device.serial, device.interface.upper(), device.name))
           i = i + 1
       print('\n')
       self.__devlist.devices = new_devices
-
-
-
-
-
-
-
-
-
-
       
     def exec_menu(self, ch):
         if ch == '':
@@ -194,10 +188,11 @@ class DiskInfo(object):
         else:
             try:
                 # select the device to test, -1 because in menu prints at 1
+                print(self.__devlist.devices)
                 self.__device = self.__devlist.devices[int(ch) - 1]
                 self.chkhealth(self.__device)
             except IndexError:
-                print("Invalid selection, please try again. YO\n")
+                print("Invalid selection, please try again. \n")
                 traceback.print_exc() 
                 
         return
