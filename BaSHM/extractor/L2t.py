@@ -41,8 +41,8 @@ class L2t(object):
       self.__part_list = self.__partitions.runMmls()
       self.__sel_dev = self.__partitions.get_sel_dev()
       
-      ch = raw_input(" >>  ")
-      self.exec_menu(ch)
+      # ch = raw_input(" >>  ")
+      # self.exec_menu(ch)
           
     def stimel(self):
       
@@ -51,7 +51,7 @@ class L2t(object):
       model = str(self.__sel_dev['Model']).replace(' ', '')
       model = model.replace('USBDevice', '')
       directory = str('case_' + model)
-      self.__filename = self.__config.get('paths', 'cases') + directory + '\\' + model + '_partition_' + str(self.__choice) + "_storage.plaso"
+      self.__filename = self.__config.get('paths', 'cases') + directory + '\\' + model + '_partition_' + str(self.__choice) + self.__config.get('plaso', 'output')
 #       print(self.__filename)
       device = self.__partitions.get_sel_dev()['DeviceID']
       
@@ -60,25 +60,31 @@ class L2t(object):
             self.__config.get('paths', 'plaso'),
             self.__config.get('commands', 'l2t'),
             ' ',
+            (' --parsers ' + self.__config.get('plaso', 'parsers_val')) if self.__config.getboolean('plaso', 'parsers') else '',
+            ' ',
             self.__filename,
             ' -p' if self.__param else '',
             ' ' + device,
             ])
 
 #       print(cmd)
+      self.timer.start()
       self.run_cmd(cmd)
       
+      self.timer.stop()
+      self.timer.printDuration()
+      
       # now run convertion from storage.plaso file to .csv
-      self.converCsv(self.__filename, directory, model)
+      self.convertCsv(self.__filename, directory, model)
 
       return
 
     def convertCsv(self, filename, directory, model):
-      print("Do you want to convert the storage.plaso file to .csv? Press Enter or abort with Ctrl+C\n")
+      print("Do you want to convert the storage.plaso file to .csv? Type y (or yes) to continue or abort with Enter\n")
       try: 
         ch = raw_input(" >>  ")
         
-        if ch == '':
+        if ch in ['yes', 'y']:
           cmd = ''.join([
                 self.__config.get('paths', 'plaso'),
                 self.__config.get('commands', 'psort'),
@@ -90,13 +96,7 @@ class L2t(object):
     
           print("Starting conversion to .CSV: ")
 
-          self.timer.start()
-
-          self.run_cmd(cmd)
-
-          self.timer.stop()
-          self.timer.printDuration()
-          
+          self.run_cmd(cmd)          
 
           self.convertHtml(directory, model)
 
@@ -122,8 +122,8 @@ class L2t(object):
                 self.__config.get('commands', 'lister'),
                 (' -t ' +  min_t) if min_t != '' else '',
                 ' -template ' + self.__config.get('paths', 'poggi') + self.__config.get('names', 'template'),
-                ' -f ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_supertimeline.csv"
-                ' -o ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice + "_report_l2t.html"
+                ' -f ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + "_supertimeline.csv"
+                ' -o ' + self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + "_report_l2t.html"
                 ])
     
           print("Started conversion to HTML: ")

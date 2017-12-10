@@ -7,6 +7,7 @@ Created on 13 nov 2017
 import subprocess as sp
 import re
 from partitions.Mmls import Mmls
+from utils.ConcereteWriter import ConcreteWriter
 
 class Partitions(object):
     '''
@@ -20,12 +21,14 @@ class Partitions(object):
     __selOffset = 0
     __part_list = None
     __choice = None
+    __suffix = '_disk_data.txt'
 
     def __init__(self, config):
       '''
       Constructor
       '''     
       self.__config = config
+      self.__writer = ConcreteWriter()
         
     def init_menu(self):
       
@@ -41,7 +44,9 @@ class Partitions(object):
       self.print_menu()
       ch = raw_input(" >>  ")
       self.exec_menu(ch)
-      self.runMmls()
+      out = self.runMmls()
+
+      self.writeInfo(out, self._selDev)
 
     def getDevices(self):
       
@@ -110,6 +115,23 @@ class Partitions(object):
     def openShell(self):
       return
     
+    def writeInfo(self, par_list, sel_dev):
+      # set pathname for extracting the timeline
+      model = str(sel_dev['Model']).replace(' ', '')
+      model = model.replace('USBDevice', '')
+      directory = str('case_' + model)
+      filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + self.__suffix
+
+      out = '\nPartition structure for ' + model + ':\n'
+      out = out + '{0:<2} {1:<30}\t{2:>15} {3:>15}\t{4:>15}\t{5:>7}\n'.format('#', 'Desc', 'Start sector', 'Start block', 'Length', 'Size')
+
+      for part in par_list:
+        out = out + '{:<2} {:<30}\t{:>15} {:>15}\t{:>15}\t{:>7} MB\n'.format(part[0],part[1],part[2],part[3],part[4],part[5])
+
+      self.__writer.open(filename, "a")
+      self.__writer.write(out)
+      self.__writer.close()
+
     def exec_menu(self, ch):
         if ch == '':
             pass

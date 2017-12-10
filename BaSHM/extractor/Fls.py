@@ -204,12 +204,6 @@ class Fls(object):
     print("Extracting timeline to: {}\n".format(self.__filename))
     print("Performing equivalent TSK command to: fls -f ntfs -i {} -o {} {} {}\n".format(self.__image_type, self.__offset, ''.join(self.__images), self.__inode))
     
-    # VOL = ['\\\?\Volume{9eeddfb1-0000-0000-0000-505e3a000000}']
-    # self._images = ['\\\.\PHYSICALDRIVE1']
-    # VOL = ['\\\?\Volume{52c225e9-0000-0000-0000-50f90d000000}']
-    # VOL = ['D:\FTK\win10_C.001']
-    
-    # image_type='raw', images=['yo'], images=['yo'], offset=0, print=False, recursive=False
     options = {'image_type':self.__image_type,
                'images':self.__images,
                'offset':self.__offset,
@@ -271,7 +265,7 @@ class Fls(object):
 
 
   def set_recursive(self, value):
-    self.__recursive = value
+    self._recursive = value
 
 
   def set_image_type(self, value):

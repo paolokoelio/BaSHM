@@ -23,9 +23,9 @@ class ConcreteWriter(object):
       config.read(CONFIG_PATH)
       self.__config = config
       
-    def open(self, path):  
+    def open(self, path, mode="w"):  
       try:
-        self.__f = open(self.__config.get('paths', 'cases') + path, "w")
+        self.__f = open(self.__config.get('paths', 'cases') + path, mode)
       except IOError:
         print( "Could not read file: ", path)
         sys.exit()

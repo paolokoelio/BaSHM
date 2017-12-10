@@ -61,6 +61,7 @@ class Extractor(object):
       directory = str('case_' + model)
       filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_'+ str(self.__choice) + self.__suffix
       self.__fls.set_filename(filename)
+
       self.__fls.set_recursive(self.__config.getboolean('functionalities', 'recursive'))
       
       # set the physical device

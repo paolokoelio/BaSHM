@@ -85,21 +85,26 @@ class TSKExtractor(object):
       self.__device = self.__partitions.get_sel_dev()['DeviceID']
       
       cmd = ''.join([
-        
+
             self.__config.get('paths', 'tsk'),
             '\\',
             self.__config.get('commands', 'fls'),
-            ' -r' if self.__recursive else '',
-            ' -l' if self.__long_listing else '',
-            ' -p' if self.__print else '',
-            ' -h' if self.__hash else '',
-            ' -f ' + self.__fstype,
-            ' -i ' + self.__image_type,
-            ' -m "/" ',
-            '-o ',
+            ' -d' if self.__config.getboolean('fls', 'only_deleted') else '',
+            ' -D' if self.__config.getboolean('fls', 'only_dirs') else '',
+            ' -F' if self.__config.getboolean('fls', 'only_files') else '',
+            ' -l' if self.__config.getboolean('fls', 'long') else '',
+            ' -h' if self.__config.getboolean('fls', 'hash') else '',
+            ' -r' if self.__config.getboolean('fls', 'recursive') else '',
+            ' -p' if self.__config.getboolean('fls', 'full_path') else '',
+            ' -f ' + self.__config.get('fls', 'fs_type'),
+            (' -t ' + self.__config.get('fls', 'timezone_val')) if self.__config.getboolean('fls', 'timezone') else '',
+
+            ' -i ' + self.__config.get('fls', 'image_type'),
+            ' -m ' + self.__config.get('fls', 'mactime_out'),
+            ' -o ',
             str(self.__offset / 512),
             ' ' + self.__device,
-#             ' ' + self.__inode, makes TSK crash
+            #' ' + self.__config.get('fls', 'inode'), # makes TSK crash
             ' > ',
             self.__filename
             ])
