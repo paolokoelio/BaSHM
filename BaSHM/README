@@ -1,10 +1,11 @@
 This is a project for a Master Thesis in Computer Engineering about TRIAGE methods application
 in Digital Forensics.
 
-Based on pytsk, BaSHM stands for [...]. The aim is to develop a Python program to speed up and automate parts of procedures
+Based on pytsk, BaSHM stands for Bahs Saree Lel Ashyaa Mohema in Arabic "Fast Search For Important Things". 
+The aim is to develop a Python program to speed up and automate parts of procedures
 for forensic data acquisition and searching for clues (artifacts to-be evidence).
 
-You can check and disable Windows automount feature for new drives.
+You can check and disable Windows automount feature for new drives.\\
 Then you can connect a drive and check its information together with its SMART health indicators.
 You have thus created a folder for a case where you will save the timelines of a drive.
 Also information on logical structure is available, you should check that before extracting timelines.
