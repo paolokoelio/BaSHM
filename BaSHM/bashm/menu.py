@@ -3,7 +3,7 @@ Created on 23 ott 2017
 
 @author: koelio
 '''
-import subprocess as sp  # for screen cleaning (cls)
+import subprocess as sp
 import sys, traceback
 from chkmnt.Chkmnt import Chkmnt
 from diskinfo.DiskInfo import DiskInfo
@@ -82,6 +82,7 @@ class Menu(object):
     self.__TSKextractor = TSKExtractor(self.__config, self.__partitions)
     self.__L2t = L2t(self.__config, self.__partitions)
     
+    # dictionaries that map menu choices to relative methods
     self.__chkmnt_menu = {
         '1':self.__checkMount.check,
         '2':self.__checkMount.deactmnt,
@@ -113,7 +114,7 @@ class Menu(object):
         '0':self.exit,
     }
 
-    # Menu definition
+    # Main menu definition
     self.__menu_actions = {
         'main_menu': self.main_menu,
         '1': self.chkmnt,
@@ -145,7 +146,6 @@ class Menu(object):
   # Execute menu
   def exec_menu(self, ch):
       cls()
-      # ch = choice.lower()
       if ch[0] == '':
           self.__menu_actions['main_menu']()
       else:
@@ -167,7 +167,7 @@ class Menu(object):
           # then go to second level choice
           mn[ch[0]][ch[1]]()
       else:
-        # go to first level choice
+        # else go to first level choice
         mn[ch[0]]()
     # get back to main menu by default
     mn['main_menu']()
@@ -217,13 +217,7 @@ class Menu(object):
   # Exit program
   def exit(self):
       sys.exit(0)
-      return
-  
-#   def set_options(self, opts):
-#     #future work
-#     pass
-    
+      return    
     
 def cls():
-    # tmp = os.system('cls' if os.name=='nt' else 'clear')
     sp.call('cls', shell=True)

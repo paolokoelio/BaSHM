@@ -11,15 +11,15 @@ from utils.ConcereteWriter import ConcreteWriter
 
 class Partitions(object):
     '''
-    Handles logical structure information of a device
+    Handles logical structure information of a device/volume
     '''
-    __devlist = None
-    __devices = None
-    __mmls = None
+    __devlist = None  # list of devices
+    __devices = None  # for device selection
+    __mmls = None # for layout Mmls()
     __config = None
-    _selDev = None
-    __selOffset = 0
-    __part_list = None
+    _selDev = None  #selected device
+    __selOffset = 0 # selected partition
+    __part_list = None # list of partitions 
     __choice = None
     __suffix = '_disk_data.txt'
 
@@ -31,7 +31,6 @@ class Partitions(object):
       self.__writer = ConcreteWriter()
         
     def init_menu(self):
-      
       print('Choose a device:\n')
 
       self.print_menu()
@@ -40,7 +39,7 @@ class Partitions(object):
       self.exec_menu(ch)
 
     def getPartInfo(self):
-
+      # called by DiskInfo(), same as init_menu, but it writes to the disk_data.txt file as well
       self.print_menu()
       ch = raw_input(" >>  ")
       self.exec_menu(ch)
@@ -49,44 +48,27 @@ class Partitions(object):
       self.writeInfo(out, self._selDev)
 
     def getDevices(self):
-      
+      # get devices to select
       cmd = ''.join([self.__config.get('commands', 'physicaldevice')])
       
       out = self.run_cmd(cmd)
 
       devices = self.parse_out(out)
 
-      # this commented piece of code tries to match the serial numbers of devices
-      # to their DeviceID (i.e. \\.\physicaldrive*), but for consistency reasons
-      # it has been commented and abbandoned
-      # cmd = ''.join([self.__config.get('commands', 'physicalmedia')])
-      
-      # out = self.run_cmd(cmd)
-
-      # physicalMedia = self.parse_out(out)
-
-      # new_device_list =[]
-      # for device in devices:
-      #   for medium in physicalMedia:
-      #     if str(medium['Tag']) in str(device['DeviceID']):
-      #       device['SerialNumber'] = medium['SerialNumber']
-
       return devices
  
     def print_menu(self):
-      
+      # generate and print menu, used by extractor.modules
       self.__devlist = self.getDevices()
-      # self.__devlist = self.__devices
       
       i = 1
       for device in self.__devlist:
         print("%d . %s DevID: %s #partitions: %s" % (
             i, device['Model'], device['DeviceID'], device['Partitions']))
         i = i + 1
-      # print (self.__menu_devs)
       
     def parse_out(self, out):
-      
+      # parses the out of physicaldevice command (check the config for the entrire command) 
       # split per device, quite fragile as a condition, but as long as PowerShell result is consistent we're ok
       out = re.split("\r\n\r\n", out)
       # filter empty elements
@@ -116,6 +98,7 @@ class Partitions(object):
       return
     
     def writeInfo(self, par_list, sel_dev):
+      # writes to disk_data.txt file the partition infromation
       # set pathname for extracting the timeline
       model = str(sel_dev['Model']).replace(' ', '')
       model = model.replace('USBDevice', '')
@@ -142,7 +125,6 @@ class Partitions(object):
                 # select a device and get it's list partition by running mmls
                 self.__choice = ch
                 self._selDev = self.__devlist[int(ch) - 1]
-#                 self.__part_list = self.runMmls(ch)
             except KeyError:
                 print("Invalid selection, please try again.\n")
             except IndexError:

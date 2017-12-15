@@ -21,6 +21,7 @@ class Chkmnt(object):
       self.__config = config
            
     def check(self):
+      # launches command for checking the automount
       cmd = ''.join([self.__config.get('commands', 'diskpart'),
             ' ',
             self.__config.get('paths', 'static'),
@@ -29,6 +30,7 @@ class Chkmnt(object):
       self.run_cmd(cmd)
       
     def deactmnt(self): 
+      # launches command for dectivation of automount
       cmd = self.__config.get('commands', 'deactmnt')
       
       out = self.run_cmd(cmd)
@@ -36,6 +38,7 @@ class Chkmnt(object):
         print('AUTOMOUNT disabled successfully.\nYou you can now connect the Disk safely.\n')
 
     def actmnt(self):
+      # launches command for activation of automount
       cmd = self.__config.get('commands', 'actmnt')
       if self.run_cmd(cmd) == 0:
         print('AUTOMUNT enabled successfully.\n')

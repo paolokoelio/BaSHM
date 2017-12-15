@@ -9,12 +9,12 @@ It defines main + some error control (and logging TODO)
 
 @author:     koelio
 
-@copyright:  2017 unipv. All rights reserved.
+@copyright:  2017 University of Pavia . All rights reserved.
 
-@license:    CC
+@license:    Creative Commons Attribuzione 4.0 Internazionale
 
 @contact:    paolokoelio@gmail.com
-@deffield    updated: 08/12
+@deffield    updated: 12/12
 '''
 
 import sys, traceback
@@ -22,14 +22,15 @@ import os
 
 from menu import Menu
 from optparse import OptionParser
-import ConfigParser  # import not compatible with python3, should be configparser
+import ConfigParser
 
 
 __all__ = []
 __version__ = 0.1
-__date__ = '2017-10-23'
-__updated__ = '2017-12-08'
+__date__ = '2017-12-15'
+__updated__ = '2017-12-12'
 __config = None
+# configuration path of the main modules, refer to the README for a description
 CONFIG_PATH = '..\config\config.cfg'
 
 DEBUG = 0
@@ -56,54 +57,31 @@ def main(argv=None):
         parser = OptionParser(version=program_version_string, epilog=program_longdesc, description=program_license)
         parser.add_option("-n", "--non-recursive", dest="recursive", action="store_true", default=False,
                           help="un-set recursiveness option for timeline extraction")
-#         parser.add_option("-o", "--out", dest="outfile", help="set output path [default: %default]", metavar="FILE")
-#         parser.add_option("-v", "--verbose", dest="verbose", action="count", help="set verbosity level [default: %default]")
-
-        # set defaults
-#         parser.set_defaults(recursive=Fase)
 
         #initialize configuration from file
         __config = init_config()
 
         # process options
         (opts, args) = parser.parse_args(argv)
-#         opts = parser.parse_args()
 
-#         if opts.verbose > 0:
-#             print("verbosity level = %d" % opts.verbose)
         if opts.recursive:
             #the -r option works only for TSK modules (i.e. not for super-timeline, that is recursive by default)
             print("non-recursive = %s" % opts.recursive)
             __config.set('functionalities', 'recursive', 'false')
-            
-#         if opts.outfile:
-#             print("outfile = %s" % opts.outfile)
-
-
-
 
 #         Launch main menu
         print("Welcome to BaHSM\n")
         
 
         menu = Menu(__config)
-#           menu.set_options(False) # future work
         menu.main_menu()
-
-#       #  test
-#         from partitions.Partitions import Partitions
-#         from extractor.TSKExtractor import TSKExtractor #test
-#         e = TSKExtractor(Partitions())
-#         e.TSKtimel()
 
         print("Exiting correctly.")
 
 
     except Exception as e:
         traceback.print_exc()
-        #indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
-        #sys.stderr.write(indent + "  for help use --help\n")
         
         return 2
 

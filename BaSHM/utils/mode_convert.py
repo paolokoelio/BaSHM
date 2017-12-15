@@ -5,6 +5,8 @@ Created on 11 nov 2017
 '''
 import os
 
+# converts the filemode (i.e. permissions) to readable format
+
 permissionDict ={
   'access':{
     '0':('---'),
@@ -42,10 +44,9 @@ def get_unix_permissions(pth):
   
 def convert_to_symbolic(mode):
   permissionOctal = oct(int(mode))[1:4] #we have to remove the L: int mode = [365L]
-  #print(int(mode), permissionOctal) #debug
+  
   out = [] #645
   for role,octal in enumerate(permissionOctal): # [(0,6) , (1,4) , (2,5)], role is needed because octal is a tuple
     out.append(permissionDict['access'][octal])
-#   print(''.join(out))
   return out
     

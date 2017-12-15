@@ -11,7 +11,7 @@ CONFIG_PATH = '..\config\config.cfg'
 
 class DirectoryWriter(object):
     '''
-    classdocs
+    Creates a directory for the case when running DiskInfo()
     '''
     def __init__(self):
         '''

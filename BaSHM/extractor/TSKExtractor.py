@@ -6,12 +6,10 @@ Created on 20 nov 2017
 
 import subprocess as sp
 from utils.Timer import Timer
-# from bashm.menu import Menu
-
 
 class TSKExtractor(object):
     '''
-    Extracts timeline using standalone TSK 4.5
+    Extracts timeline using standalone TSK 4.5 (binary)
     '''
 # Original --help of TSK 4.5
 # usage: fls.exe [-adDFlhpruvV] [-f fstype] [-i imgtype] [-b dev_sector_size] [-m dir/] [-o imgoffset] [-z ZONE] [-s seconds] image [images] [inode]
@@ -73,7 +71,7 @@ class TSKExtractor(object):
       self.exec_menu(ch)
     
     def TSKtimel(self):
-      
+      # launches command for timeline extraction by TSK binary
       print("Launching TSK fls module..\n")
       self.init_menu()
       
@@ -81,7 +79,6 @@ class TSKExtractor(object):
       model = model.replace('USBDevice', '')
       directory = str('case_' + model)
       self.__filename = self.__config.get('paths', 'cases') + '\\' + directory + '\\' + model + '_partition_' + self.__choice  +  "_body_TSK.txt"
-      # print(self.__filename)
       self.__device = self.__partitions.get_sel_dev()['DeviceID']
       
       cmd = ''.join([
@@ -104,12 +101,9 @@ class TSKExtractor(object):
             ' -o ',
             str(self.__offset / 512),
             ' ' + self.__device,
-            #' ' + self.__config.get('fls', 'inode'), # makes TSK crash
             ' > ',
             self.__filename
             ])
-
-      # print(cmd)
 
       self.timer.start()
 
@@ -117,7 +111,6 @@ class TSKExtractor(object):
       
       self.timer.stop()
       self.timer.printDuration()
-
 
       # now run convertion from storage.plaso file to .csv
       self.convertCsv(self.__filename,directory,model)
@@ -155,6 +148,7 @@ class TSKExtractor(object):
         print('Ended by user.')
     
     def convertHtml(self, directory, model):
+        # TODO refactoring method dup.
         print("Do you want to generate an HTML report from the .CSV? Type y (or yes) to continue or abort with Enter\n")
         ch = raw_input(" >>  ")
         
@@ -180,7 +174,6 @@ class TSKExtractor(object):
           print("A .CSV file has been created in " + directory + "\n")
           print("Use python Lister.py to generate an HTML report manually, python Lister.py -h for help.\n")
 
-
     def run_cmd(self, cmd):
       '''
         Prints and runs specified command
@@ -196,14 +189,13 @@ class TSKExtractor(object):
           return out
       except sp.CalledProcessError as e:
           print("\nSomething went wrong. You may retry this action." + " ret_code: " + str(e.returncode) + "\n")
-      
-      
     
     def setOff(self, ch):
       
       # where offset in block is
       off_index = 3
-      # print('{}'.format(self.__part_list[int(ch)]))
+      # in the partition list, 3 is the index where offset,
+      # we set that when a partiion is selected
       self.__offset = int(self.__part_list[int(ch)][off_index])
     
     def exec_menu(self, ch):

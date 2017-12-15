@@ -15,8 +15,8 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import argparse
-# import gc
-# import pdb
+# import gc # used in original example
+# import pdb # -"-
 import sys
 from examples import images
 import pytsk3
@@ -69,8 +69,6 @@ class Fls(object):
     self.__images = None
     self.__offset = 0
     self.__inode = '/'
-    #self.__print = False
-    #self.__recursive = True
     self.__filename = None
 
   def list_directory(self, directory, stack=None):
@@ -200,7 +198,7 @@ class Fls(object):
               self._fout.write("{}\n".format(out).encode("utf-8"))
             
   def extractTimel(self):
-    
+    # called by Extractor() when shoosen from the menu
     print("Extracting timeline to: {}\n".format(self.__filename))
     print("Performing equivalent TSK command to: fls -f ntfs -i {} -o {} {} {}\n".format(self.__image_type, self.__offset, ''.join(self.__images), self.__inode))
     
@@ -217,7 +215,6 @@ class Fls(object):
   
     try:
       try:
-        #filename = '../files_tmp/body.txt'
         
         self.open_fout(self.__filename)
       

@@ -6,7 +6,7 @@ Created on 07 nov 2017
 
 class Writer(object):
     '''
-    Abstract Writer for writing data on file
+    Abstract Writer for writing data on file TODO implement bridge
     '''
 
 

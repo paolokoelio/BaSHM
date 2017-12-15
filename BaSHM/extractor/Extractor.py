@@ -11,19 +11,19 @@ from utils.Timer import Timer
 
 class Extractor(object):
     '''
-    classdocs
+    Extracts a timeline through library calls to libtsk of TSK
     '''
     __fls = None
-    __l2t = None
-    __devlist = None
-    __config = None
-    __partitions = None
-    __mmls = None
+    __l2t = None 
+    __devlist = None # a list of devices that will be printete in the menu
+    __config = None # config file
+    __partitions = None # Partiotions object
+    __mmls = None   # Mmmls clas used in Partitions()
     __part_list = None  # partition list of the selected device in Partition during menu choice
     __sel_dev = None  # device selected in Partition class during menu choice
-    __offset = None
-    __suffix = '_body.txt'
-    __choice = None
+    __offset = None   # selected offset to point to a partition
+    __suffix = '_body.txt' # filename suffix
+    __choice = None # selected choice in the menu
 
     def __init__(self, config, partitions):
       '''
@@ -35,12 +35,9 @@ class Extractor(object):
       self.__fls = Fls()
       
     def init_menu(self):
-      
       # Exploiting the menu listing feature from Partitions()
       self.__partitions.init_menu()
       self.__part_list = self.__partitions.runMmls()
-      
-      #self.__part_list = self.__partitions.get_part_list()
       self.__sel_dev = self.__partitions.get_sel_dev()
       
       ch = raw_input(" >>  ")
@@ -48,7 +45,7 @@ class Extractor(object):
     
     def timel(self):
       '''
-      Perform timeline extraction
+      Perform custom timeline extraction (calls Fls())
       '''
       print("Launching fls module..\n")
       self.init_menu()
@@ -85,7 +82,8 @@ class Extractor(object):
 
       return
     
-    def convertCsv(self, filename, directory, model):    # now run convertion
+    def convertCsv(self, filename, directory, model):
+      # now run convertion
       print("Do you want to convert the body.txt file to .csv? Type y (or yes) to continue or abort with Enter\n")
       
       try:
@@ -115,6 +113,7 @@ class Extractor(object):
         print('Ended by user.')
     
     def convertHtml(self, directory, model):
+        # launch conversion to HTML
         print("Do you want to generate an HTML report from the .CSV? Type y (or yes) to continue or abort with Enter\n")
         ch = raw_input(" >>  ")
         
@@ -142,7 +141,7 @@ class Extractor(object):
     
     def browse(self):
       '''
-      Browse the FS on the image
+      Browse the FS on the image (future work TODO)
       '''
       print("This function is left for future work.")
       return
@@ -153,6 +152,7 @@ class Extractor(object):
       self.__offset = int(self.__part_list[int(ch)][off_index])
     
     def exec_menu(self, ch):
+      # executes the choosen action in menu
       if ch == '':
           pass
       elif int(ch) == 0:

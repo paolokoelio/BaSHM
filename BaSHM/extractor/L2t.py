@@ -6,24 +6,23 @@ Created on 20 nov 2017
 
 import subprocess as sp
 from utils.Timer import Timer
-# from bashm.menu import Menu
 
 CONFIG_PATH = '..\config\config.cfg'
 
 
 class L2t(object):
     '''
-    classdocs
+    Log2timeline super-timeline extraction
     '''
     
     __config = None
     __filename = None
     __offset = None
-    __partitions = None
+    __partitions = None # Partitions()
     __part_list = None
-    __sel_dev = None
+    __sel_dev = None # selected device
     __choice = None
-    __param = False
+    __param = False # optional fututre work parameter, not used
 
     def __init__(self, config, partitions):
         '''
@@ -34,7 +33,7 @@ class L2t(object):
         self.timer = Timer()
 
     def init_menu(self):
-      
+      # initialize menu
       print("Choose the disk from which to extract super-timeline\n")
       # Exploiting the menu listing feature from Partitions()
       self.__partitions.init_menu()
@@ -45,14 +44,14 @@ class L2t(object):
       # self.exec_menu(ch)
           
     def stimel(self):
-      
+      # launch command to start log2timeline for super-timeline extraction
       self.init_menu()
       
       model = str(self.__sel_dev['Model']).replace(' ', '')
       model = model.replace('USBDevice', '')
       directory = str('case_' + model)
       self.__filename = self.__config.get('paths', 'cases') + directory + '\\' + model + '_partition_' + str(self.__choice) + self.__config.get('plaso', 'output')
-#       print(self.__filename)
+
       device = self.__partitions.get_sel_dev()['DeviceID']
       
       cmd = ''.join([
@@ -67,7 +66,6 @@ class L2t(object):
             ' ' + device,
             ])
 
-#       print(cmd)
       self.timer.start()
       self.run_cmd(cmd)
       
@@ -80,6 +78,7 @@ class L2t(object):
       return
 
     def convertCsv(self, filename, directory, model):
+      # convert to CSV (method dup. TODO refactoring)
       print("Do you want to convert the storage.plaso file to .csv? Type y (or yes) to continue or abort with Enter\n")
       try: 
         ch = raw_input(" >>  ")
@@ -108,6 +107,7 @@ class L2t(object):
         print('Ended by user.')
 
     def convertHtml(self, directory, model):
+        # convert to HTML (method dup. TODO refactoring)
         print("Do you want to generate an HTML report from the .CSV? Type y (or yes) to continue or abort with Enter\n")
         ch = raw_input(" >>  ")
         
@@ -137,7 +137,6 @@ class L2t(object):
       '''
         Prints and runs specified command
       '''
-      # print('Needs to be run as Privileged User.')
       print('Issuing command: "' + cmd + '".')
       
       try:

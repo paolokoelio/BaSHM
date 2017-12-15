@@ -13,7 +13,7 @@ from utils.DirectoryWriter import DirectoryWriter
 
 class DiskInfo(object):
     '''
-    Class for managing objects related to Disk Health through pySMART wrapper for smartmontools (https://www.smartmontools.org/)
+    Manages objects related to Disk Health through pySMART wrapper for smartmontools (https://www.smartmontools.org/)
     '''
     
     __devlist = None
@@ -35,7 +35,7 @@ class DiskInfo(object):
         self.__dir_writer = DirectoryWriter()
         
     def init_menu(self):
-      
+      # initialize menu and choice selection
       self.printMenu()
             
       ch = raw_input(" >>  ")
@@ -43,19 +43,12 @@ class DiskInfo(object):
     
     def chkhealth(self, device):
 
-      # there is a bug here, self.__model has the correct value only if the createCaseFolder
+      # self.__model has the correct value only if the createCaseFolder
       # method has been first called, and it stays valid only in the same instance;
       # this may, if the case_folder already exists and you have re-run the application
-      # checkhealth will not work if not calling createCaseFolder before
+      # checkhealth will not work if not calling createCaseFolder before,
       # thus we force its call here:
-
       self.createCaseFolder()
-
-#       model = str(device.model).replace(' ', '')
-#       model.replace('USBDevice', '')
-#       self.__sel_model = model
-#       self.__directory = 'case_' + self.__sel_model
-      # self.__dir_writer.createDir(directory)
 
       try:
 
@@ -79,7 +72,7 @@ class DiskInfo(object):
         
         self.__writer.write(out + "\n")
         
-        # after test print all attributes
+        # after helath check, print all attributes
           
         header_printed = False
         for attr in device.attributes:
@@ -105,7 +98,7 @@ class DiskInfo(object):
         return 2
 
     def createCaseFolder(self):
-      
+      # creates specific case folder w.r.t. drive name
       print('\n')
       print("You need to create a directory for the device data.\n")
       self.__partitions.init_menu()
@@ -127,44 +120,11 @@ class DiskInfo(object):
       # self.__writer.createDir(directory)
   
     def openDD(self):
+      # future work TODO
       pass
 
-    # this commented code was an attemp to match the sda, sdb etc device names 
-    # to their Device ID in Win32 Device namespace, i.e. \\.\PhysicalDrive*
-    # TODO find a way to obtain that ID from smartmontools
-    # def printMenuOld(self):
-      
-    #   # needed for consistency between names, i.e. /dev/sda and \\.\.physicaldrive0
-    #   self.__windev = self.__partitions.get_devlist()
-    #   #print(self.__windev)
-      
-    #   print('Loading devices...')
-    #   self.__devlist = DeviceList()
-    #   print('Choose the device:\n')
-    #   i = 1
-    #   new_devices = []
-
-    #   for windev in self.__windev:
-    #   	#print(windev)
-    #     for device in self.__devlist.devices:
-    #       print(device)
-    #       if str(windev['SerialNumber']) in str(device.serial):
-            
-    #         device.name = windev['DeviceID']
-    #         #reordering the list for consistency
-    #         new_devices.append(device)
-    #         print("%d. %s serial:%s, %s device on %s" % (
-    #             i, device.model, device.serial, device.interface.upper(), device.name))
-    #         i = i + 1
-    #   print('\n')
-    #   self.__devlist.devices = new_devices
-
     def printMenu(self):
-      
-      # needed for consistency between names, i.e. /dev/sda and \\.\.physicaldrive0
-      # self.__windev = self.__partitions.get_devlist()
-      # print(self.__windev)
-      
+      # prints menu entries      
       print('Loading devices...')
       self.__devlist = DeviceList()
       print('Choose the device to test:\n')
@@ -181,6 +141,7 @@ class DiskInfo(object):
       self.__devlist.devices = new_devices
       
     def exec_menu(self, ch):
+      # executes the selected action in menu
         if ch == '':
             pass
         elif int(ch) == 0:
@@ -188,7 +149,6 @@ class DiskInfo(object):
         else:
             try:
                 # select the device to test, -1 because in menu prints at 1
-                #print(self.__devlist.devices)
                 self.__device = self.__devlist.devices[int(ch) - 1]
                 self.chkhealth(self.__device)
             except IndexError:
