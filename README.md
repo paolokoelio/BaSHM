@@ -18,11 +18,11 @@ Now you can to analyze the generated body-format and CSV files with grep, text e
 Such interface provides means to rapidly assess the presence of abnormal event activity with non linear displacement and colors.
 
 INSTALLATION
-- clone the source and install python 2.7
+- clone this source and install python 2.7
 - clone or install pytsk package (it comes with sleuthkit source)
-- setup and build pytsk by following instructions on pytsk readme (pay attention to Visual C++ 2008-10 part)
-- install smartmontools (https://www.smartmontools.org/)
-- clone or install pySMART package (https://github.com/freenas/py-SMART/tree/master/pySMART)
+- setup and build pytsk by following instructions on pytsk readme (if compiling pay attention to Visual C++ 2008-10 part)
+- install smartmontools for Windows (https://www.smartmontools.org/)
+- clone or install pySMART python package (https://github.com/freenas/py-SMART/tree/master/pySMART)
 - download Windows version of plaso (1.5.1) and TSK (4.5) and put their "root folders" in the root of BaSHM
 - rename the plaso and TSK folders to "plaso151" and "sleuthkit45" or accordingly to the config/config.cfg file
 - to run BaSHM execute with python2.7 the bashm/bashm.py script and you're done
@@ -39,4 +39,3 @@ python setup.py build
 python setup.py install
 
 The same is valid for pySMART.
-
